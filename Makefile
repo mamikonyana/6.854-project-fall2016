@@ -17,4 +17,4 @@ rebuildrun: clean ${BUILD_DIR}/main
 .PHONY: run
 
 build/main:
-	${CC} -o ${BUILD_DIR}/main src/main.c
+	${CC} -o ${BUILD_DIR}/main src/main.c src/bce.c src/naive.c src/helpers.c
