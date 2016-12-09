@@ -7,7 +7,7 @@ BUILD_DIR = build
 default: clean ${BUILD_DIR}/main
 
 clean:
-	rm ${BUILD_DIR}/main
+	rm -f ${BUILD_DIR}/main
 .PHONY: clean
 
 rebuildrun: clean ${BUILD_DIR}/main
