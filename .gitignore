@@ -1,0 +1,9 @@
+# Editor files
+.idea/
+*.sw[op]
+
+# build
+build/
+cmake-build-debug/
+
+CMakeLists.txt
