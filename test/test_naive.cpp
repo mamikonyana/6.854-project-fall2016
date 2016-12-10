@@ -21,8 +21,17 @@ void test_diam2d() {
     printf("PASS: diam2d\n");
 }
 
+void test_monotonicity_11gon() {
+    std::vector<Point> data = load_csv_data("data/11-gon.csv");
+    std::vector<int> naive_a = naive_monotonicity_2d(data);
+    for (int i = 0; i < naive_a.size(); i++) {
+        printf("%d\n", naive_a[i]);
+    }
+}
+
 int main() {
     test_diam2d();
+    test_monotonicity_11gon();
     return 0;
 }
 
