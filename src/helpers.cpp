@@ -56,7 +56,7 @@ double standard_angle(double angle) {
     return 2 * PI * fraction;
 }
 
-double relative_angle(Point &start, Point& end) {
+double relative_angle(Point &start, Point &end) {
     double dx = end[0] - start[0];
     double dy = end[1] - start[1];
     if (dx == 0) {
@@ -98,7 +98,13 @@ std::pair<double, double> positive_directions(Point &p1, Point &p2) {
     return std::make_pair(range_begin, range_end);
 }
 
-std::pair<double, double> range_intersect(std::pair< double, double > r1, std::pair< double, double > r2) {
+/**
+ * Only works if each of the ranges is shorter than PI!!
+ * @param r1
+ * @param r2
+ * @return
+ */
+std::pair<double, double> range_intersect(std::pair<double, double> r1, std::pair<double, double> r2) {
     double delta = r1.first;
 
     // normalize
@@ -107,11 +113,15 @@ std::pair<double, double> range_intersect(std::pair< double, double > r1, std::p
     if (r1.second < 0) {
         r1.second += 2 * PI;
     }
+
     r2.first = standard_angle(r2.first - delta);
+    r2.second = standard_angle(r2.second - delta);
     if (r2.first > PI) {
         r2.first -= 2 * PI;
+        if (r2.second > PI) {
+            r2.second -= 2 * PI;
+        }
     }
-    r2.second = standard_angle(r2.second - delta);
 
     // printf("changed angles: %.3f, %.3f, %.3f, %.3f\n", r1.first, r1.second, r2.first, r2.second);
 

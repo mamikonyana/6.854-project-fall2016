@@ -66,9 +66,21 @@ void test_range_intersect() {
     assert_equal(range2.first, 0.3 + PI, 1e-5);
     assert_equal(range2.second, 0.3, 1e-5);
 
-    std::pair<double, double> intersect = range_intersect(range, range2);
-    assert_equal(intersect.first, 0.2, 1e-5, "first");
-    assert_equal(intersect.second, 0.3, 1e-5, "second");
+    std::pair<double, double> intersect;
+    intersect = range_intersect(range, range2);
+    assert_equal(intersect.first, 0.2, 1e-5);
+    assert_equal(intersect.second, 0.3, 1e-5);
+
+    std::pair<double, double> range3 = {0.0, PI};
+    std::pair<double, double> range4 = {0.2, PI + 0.1};
+    intersect = range_intersect(range3, range4);
+    assert_equal(intersect.first, 0.2, 1e-5);
+    assert_equal(intersect.second, PI, 1e-5);
+
+    std::pair<double, double> range5 = {0.7, 0.9};
+    std::pair<double, double> range6 = {0.2, 0.4};
+    intersect = range_intersect(range5, range6);
+    assert_equal(intersect.first, -1, 1e-5);
     printf("PASS: range_intersect\n");
 }
 
