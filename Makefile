@@ -1,5 +1,6 @@
 # Compiler
-CC = gcc
+CC = g++
+CCFLAGS=-std=c++11
 
 # Project folders
 BUILD_DIR = build
@@ -16,13 +17,13 @@ rebuildrun: clean ${BUILD_DIR}/main
 	@echo Build Successful! Running...
 	@echo
 	./${BUILD_DIR}/main
-.PHONY: run
+.PHONY: rebuildrun
 
 build/main:
-	${CC} -o ${BUILD_DIR}/main src/main.c src/bce.c src/naive.c src/helpers.c
+	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp src/helpers.cpp
 
 test:
 	@rm -f ${TEST_DIR}/tmp
-	${CC} -I ${PROJECT_SRC}/* -o ${TEST_DIR}/tmp ${TEST_DIR}/test_helpers.c
+	${CC} ${CCFLAGS} -I ${PROJECT_SRC}/* -o ${TEST_DIR}/tmp ${TEST_DIR}/test_helpers.c
 	./${TEST_DIR}/tmp
 .PHONY: test
