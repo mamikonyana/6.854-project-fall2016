@@ -13,7 +13,11 @@ double difference_l2norm(Point a, Point b);
 
 std::vector <Point> load_csv_data(std::string path);
 
+double standard_angle(double angle);
+
 double relative_angle(Point& p1, Point& p2);
+
+std::pair<double, double> range_intersect(std::pair< double, double > r1, std::pair< double, double > r2);
 
 std::pair< double, double > positive_directions(Point& p1, Point& p2);
 

@@ -98,24 +98,88 @@ std::pair<double, double> positive_directions(Point &p1, Point &p2) {
     return std::make_pair(range_begin, range_end);
 }
 
-std::pair<double, double> positive_directions(Point &p1, Point &p2, std::pair<double, double> range) {
-    double direction = relative_angle(p1, p2);
-    double range_begin = standard_angle(direction - PI / 2);
-    double range_end = standard_angle(direction + PI / 2);
+std::pair<double, double> range_intersect(std::pair< double, double > r1, std::pair< double, double > r2) {
+    std::pair< double, double > res;
 
-    if (range_begin > range_end) {
-        range_end += 2 * PI;
+    double delta = r1.first;
+
+    // normalize
+    r1.first -= delta;
+    r1.second -= delta;
+    if (r1.second < 0) {
+        r1.second += 2 * PI;
     }
-    double before_begin = range.first;
-    double before_end = range.second;
-    if (before_begin > before_end) {
-        before_end += 2 * PI;
+    r2.first -= delta;
+    if (r2.first < 0) {
+        r2.first += 2 * PI;
     }
-    double new_start = max(range_begin, before_begin);
-    double new_end = min(range_end, before_end);
-    if (new_start > new_end) {
-        return std::make_pair(-1.0, -1.0); // TODO: Better approach for reporting infeasible.
+    r2.second -= r1.first;
+    if (r2.second < 0) {
+        r2.second += 2 * PI;
     }
-    return std::make_pair(standard_angle(new_start), standard_angle(new_end));
+
+    // now r1 \in [0, PI)
+    if (r2.first > r2.second) {
+        r2.second += 2 * PI;
+    }
+
+    if (r2.first < r1.second) {
+        res = std::make_pair(r2.first, r1.second);
+    } else if (r2.second > 2 * PI) {
+        res = std::make_pair(0, min(r1.second, r2.second - 2 * PI));
+    } else {
+        res = std::make_pair(-1, -1);
+        return res;
+    }
+
+    res.first  = standard_angle(res.first  + delta);
+    res.second = standard_angle(res.second + delta);
+
+    return res;
+
+    //  std::pair< double, double> res;
+    //  if (r1.first < r1.second && r2.first < r2.second) {
+    //      res = std::make_pair(max(r1.first, r2.first), min(r1.second, r2.second));
+    //  } else if (r1.first > r1.second) {
+    //      std::swap(r1, r2);
+    //  }
+    //  if (r1.first < r1.second) {
+    //      r2.second += 2 * PI;
+    //  }
+
+    //  if (r1.first < r1.second && r2.first > r2.second) {
+    //  }
+    //  if (r1.first > r1.second) {
+    //      r1.second += 2 * PI;
+    //  }
+    //  if (r2.first > r2.second) {
+    //      r2.second += 2 * PI;
+    //  }
+    //  auto res = std::make_pair(max(r1.first, r2.first), min(r1.second, r2.second));
+    //  if (res.first > res.second) {
+    //      return std::make_pair(-1.0, -1.0); // TODO: Better approach for reporting infeasible.
+    //  }
+    //  return std::make_pair(standard_angle(res.first), standard_angle(res.second));
 }
 
+// std::pair<double, double> positive_directions(Point &p1, Point &p2, std::pair<double, double> range) {
+//     double direction = relative_angle(p1, p2);
+//     double range_begin = standard_angle(direction - PI / 2);
+//     double range_end = standard_angle(direction + PI / 2);
+// 
+//     if (range_begin > range_end) {
+//         range_end += 2 * PI;
+//     }
+//     double before_begin = range.first;
+//     double before_end = range.second;
+//     if (before_begin > before_end) {
+//         before_end += 2 * PI;
+//     }
+//     double new_start = max(range_begin, before_begin);
+//     double new_end = min(range_end, before_end);
+//     if (new_start > new_end) {
+//         return std::make_pair(-1.0, -1.0); // TODO: Better approach for reporting infeasible.
+//     }
+//     return std::make_pair(standard_angle(new_start), standard_angle(new_end));
+// }
+// 

@@ -25,12 +25,12 @@ data/gaussian_%.csv:
 	python datagen/moving_gaussian.py --num-points $* -o data/gaussian_$*.csv --speed 1 --covariance 0.03 0 0 1
 
 build/main:
-	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp src/helpers.cpp src/naive.cpp
+	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp src/helpers.cpp src/naive.cpp src/bce.h
 
 test: TEST=naive
 test:
 	@rm -f ${TEST_DIR}/tmp
-	${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp ${TEST_DIR}/test_${TEST}.cpp ${PROJECT_SRC}/naive.cpp ${PROJECT_SRC}/helpers.cpp
+	${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp ${TEST_DIR}/test_${TEST}.cpp ${PROJECT_SRC}/naive.cpp ${PROJECT_SRC}/helpers.cpp ${PROJECT_SRC}/bce.cpp
 	./${TEST_DIR}/tmp
 .PHONY: test
 

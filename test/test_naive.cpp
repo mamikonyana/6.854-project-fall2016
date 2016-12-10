@@ -5,6 +5,7 @@
 
 #include "../src/helpers.h"
 #include "../src/naive.h"
+#include "../src/bce.h"
 
 #include "check.h"
 
@@ -34,6 +35,7 @@ void test_monotonicity_11gon() {
     std::vector<int> exp_answer = {6, 7, 8, 9, 10, 10, 10, 10, 10, 10, 10};
 
     check(exp_answer, naive_monotonicity_2d(data), "naive monotonicity_11gon");
+    check(exp_answer, bce_monotonicity_2d(data), "bce monotonicty_11gon");
 }
 
 int main() {
