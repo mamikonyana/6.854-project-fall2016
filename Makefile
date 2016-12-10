@@ -24,7 +24,7 @@ build/main:
 
 test:
 	@rm -f ${TEST_DIR}/tmp
-	${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp ${TEST_DIR}/test_naive.cpp
+	${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp ${TEST_DIR}/test_naive.cpp ${PROJECT_SRC}/naive.cpp ${PROJECT_SRC}/helpers.cpp
 	./${TEST_DIR}/tmp
 .PHONY: test
 
