@@ -2,7 +2,7 @@
 
 #include <vector>
 
-void check(std::vector< int > expected, std::vector< int > received, std::string name) {
+void check_vectors(std::vector<int> expected, std::vector<int> received, std::string name) {
     if (expected == received) {
         printf("PASS: %s\n", name.c_str());
     } else {

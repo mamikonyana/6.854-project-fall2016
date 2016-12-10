@@ -18,7 +18,7 @@ void test_diam2d() {
                                  {2.5, 2.5}};
 
     std::vector<int> exp_answer = {2, 2, 3, 3, 5, 5};
-    check(exp_answer, naive_diameter(points), "naive diam2d");
+    check_vectors(exp_answer, naive_diameter(points), "naive diam2d");
 }
 
 void test_monotonicity_simple_triangle() {
@@ -27,15 +27,15 @@ void test_monotonicity_simple_triangle() {
                                  {0.0, -1.0}};
     std::vector<int> exp_answer = {2, 2, 2};
 
-    check(exp_answer, naive_monotonicity_2d(points), "naive monotonicity_simple_triangle");
+    check_vectors(exp_answer, naive_monotonicity_2d(points), "naive monotonicity_simple_triangle");
 }
 
 void test_monotonicity_11gon() {
     std::vector<Point> data = load_csv_data("data/11-gon.csv");
     std::vector<int> exp_answer = {6, 7, 8, 9, 10, 10, 10, 10, 10, 10, 10};
 
-    check(exp_answer, naive_monotonicity_2d(data), "naive monotonicity_11gon");
-    check(exp_answer, bce_monotonicity_2d(data), "bce monotonicty_11gon");
+    check_vectors(exp_answer, naive_monotonicity_2d(data), "naive monotonicity_11gon");
+    check_vectors(exp_answer, bce_monotonicity_2d(data), "bce monotonicty_11gon");
 }
 
 int main() {
