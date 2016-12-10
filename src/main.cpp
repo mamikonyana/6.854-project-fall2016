@@ -4,11 +4,11 @@
 #include "naive.h"
 
 int main() {
-    Position p1 = {10, 20};
-    Position p2 = {11, 21};
+    Point p1 = {10, 20};
+    Point p2 = {11, 21};
     printf("%.2f\n", difference_l2norm(p1, p2));
     printf("loading data/11-gon.csv..\n");
-    std::vector<Position> data = load_csv_data("data/11-gon.csv");
+    std::vector<Point> data = load_csv_data("data/11-gon.csv");
     printf("loaded %lu points\n", data.size());
     /*
     const int size = 5;

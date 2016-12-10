@@ -5,7 +5,7 @@
 #include "naive.h"
 #include "helpers.h"
 
-std::vector< int > naive_diameter(std::vector< Position >& points) {
+std::vector< int > naive_diameter(std::vector< Point >& points) {
     int size = points.size();
     std::vector< int > answer(size);
     for (int i = 0; i < size; i++) {
@@ -17,7 +17,7 @@ std::vector< int > naive_diameter(std::vector< Position >& points) {
     return answer;
 }
 
-std::vector< int > naive_monotonicity_2d(std::vector< Position >& points) {
+std::vector< int > naive_monotonicity_2d(std::vector< Point >& points) {
     int size = points.size();
     std::vector< int > answer(size);
 

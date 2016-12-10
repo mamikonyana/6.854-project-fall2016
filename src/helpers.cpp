@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-double difference_l2norm(Position a, Position b) {
+double difference_l2norm(Point a, Point b) {
     double norm = 0.0;
     for (int i = 0; i < a.size(); i++) {
         norm += (a[i] - b[i]) * (a[i] - b[i]);
@@ -10,14 +10,14 @@ double difference_l2norm(Position a, Position b) {
     return sqrt(norm);
 }
 
-std::vector<Position> load_csv_data(std::string path) {
+std::vector<Point> load_csv_data(std::string path) {
     const char DELIMITER[2] = ",";
 
     FILE *stream = fopen(path.c_str(), "r");
     char line[1024];
     char *token;
 
-    std::vector<Position> points(0);
+    std::vector<Point> points(0);
 
     int num_columns = 0;
 
@@ -36,7 +36,7 @@ std::vector<Position> load_csv_data(std::string path) {
     printf("there are %d columns\n", num_columns);
 
     while (fgets(line, 1024, stream)) {
-        Position p(num_columns);
+        Point p(num_columns);
         token = strtok(line, DELIMITER);
         p[0] = atof(token);
         for (int i = 1; i < num_columns; i++) {
@@ -58,7 +58,7 @@ double standard_angle(double angle) {
     return 2 * PI * fraction;
 }
 
-double angle(Position &vector) {
+double angle(Point &vector) {
     double dx = vector[2] - vector[0];
     double dy = vector[3] - vector[1];
     if (dx == 0) {
@@ -92,7 +92,7 @@ double min(double a, double b) {
     return b;
 }
 
-std::pair<double, double> positive_directions(Position &vector) {
+std::pair<double, double> positive_directions(Point &vector) {
     double direction = angle(vector);
     double range_begin = standard_angle(direction - PI / 2);
     double range_end = standard_angle(direction + PI / 2);
@@ -100,7 +100,7 @@ std::pair<double, double> positive_directions(Position &vector) {
     return std::make_pair(range_begin, range_end);
 }
 
-std::pair<double, double> positive_directions(Position &vector, std::pair<double, double> overlap) {
+std::pair<double, double> positive_directions(Point &vector, std::pair<double, double> overlap) {
     double direction = angle(vector);
     double range_begin = standard_angle(direction - PI / 2);
     double range_end = standard_angle(direction + PI / 2);
