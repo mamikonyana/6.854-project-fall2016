@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "helpers.h"
+#include "naive.h"
 
 int main() {
     Position p1 = {10, 20};
@@ -37,18 +38,11 @@ int main() {
 
     // printf("%.1f, %.1f\n", dir[0] * 180/ PI , dir[1] * 180/ PI );
 
-    // printf("loading data/11-gon.csv..\n");
-    // double data[100];
-    // int dataSize = loadData("data/11-gon.csv", data);
-    // const int Dim = 2;
-    // const int size = 11;
-    // assert(dataSize == 22);
-    // int length = dataSize / Dim;
-    // int naive_a[11];
-    // naive_monotonicity_2d(data, length, naive_a);
-    // for (int i = 0; i < size; i++) {
-    //     printf("%d\n", naive_a[i]);
-    // }
+    assert(data.size() == 11);
+    std::vector<int> naive_a = naive_monotonicity_2d(data);
+    for (int i = 0; i < naive_a.size(); i++) {
+        printf("%d\n", naive_a[i]);
+    }
 
 }
 
