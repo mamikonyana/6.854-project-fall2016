@@ -10,10 +10,10 @@ typedef std::vector<double> Position;
 
 double difference_l2norm(Position a, Position b);
 
-// std::vector< Point > loadData(std::string path);
+std::vector <Position> load_csv_data(char* path);
 //
 // double angle(Point vector);
 
-std::pair< double, double > positive_directions(Point vector, std::pair< double, double > overlap);
+// std::pair<double, double> positive_directions(Point vector, std::pair<double, double> overlap);
 
 #endif // INC_6_854_PROJECT_HELPERS_H

@@ -1,6 +1,7 @@
 #include "helpers.h"
 #include <printf.h>
 #include <math.h>
+#include <stdlib.h>
 
 double difference_l2norm(Position a, Position b) {
     double norm = 0.0;
@@ -9,45 +10,46 @@ double difference_l2norm(Position a, Position b) {
     }
     return sqrt(norm);
 }
-//
-//
-// int loadData(char *path, double *values) {
-//     const char DELIMITER[2] = ",";
-//
-//     FILE *stream = fopen(path, "r");
-//     char line[1024];
-//     char *token;
-//
-//     int num_columns = 0;
-//
-//     // Consume header and calculate number of columns
-//     fgets(line, 1024, stream);
-//     token = strtok(line, DELIMITER);
-//     if (token == NULL) {
-//         num_columns = 1;
-//     }
-//     // Walk through other tokens
-//     while (token != NULL) {
-//         token = strtok(NULL, DELIMITER);
-//         num_columns += 1;
-//     }
-//
-//
-//     printf("there are %d columns\n", num_columns);
-//     int index = 0;
-//
-//     while (fgets(line, 1024, stream)) {
-//         token = strtok(line, DELIMITER);
-//         values[index] = strtod(token, NULL);
-//         index += 1;
-//         for (int i = 1; i < num_columns; i++) {
-//             token = strtok(NULL, DELIMITER);
-//             values[index] = strtod(token, NULL);
-//             index += 1;
-//         }
-//     }
-//     return index;
-// }
+
+
+std::vector <Position> load_csv_data(char* path) {
+    const char DELIMITER[2] = ",";
+
+    FILE *stream = fopen(path, "r");
+    char line[1024];
+    char *token;
+
+    std::vector <Position> points(0);
+
+    int num_columns = 0;
+
+    // Consume header and calculate number of columns
+    fgets(line, 1024, stream);
+    token = strtok(line, DELIMITER);
+    if (token == NULL) {
+        num_columns = 1;
+    }
+    // Walk through other tokens
+    while (token != NULL) {
+        token = strtok(NULL, DELIMITER);
+        num_columns += 1;
+    }
+
+    printf("there are %d columns\n", num_columns);
+    int index = 0;
+
+    while (fgets(line, 1024, stream)) {
+        Position p(num_columns);
+        token = strtok(line, DELIMITER);
+        p[0] = atof(token);
+        for (int i = 1; i < num_columns; i++) {
+            token = strtok(NULL, DELIMITER);
+            p[i] = atof(token);
+        }
+        points.push_back(p);
+    }
+    return points;
+}
 //
 // /**
 //  * @param angle
