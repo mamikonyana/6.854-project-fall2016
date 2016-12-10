@@ -58,9 +58,9 @@ double standard_angle(double angle) {
     return 2 * PI * fraction;
 }
 
-double relative_angle(Point &p1, Point& v2) {
-    double dx = v2[0] - p1[0];
-    double dy = v2[1] - v2[1];
+double relative_angle(Point &start, Point& end) {
+    double dx = end[0] - start[0];
+    double dy = end[1] - start[1];
     if (dx == 0) {
         if (dy > 0) {
             return PI / 2;
