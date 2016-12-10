@@ -99,8 +99,6 @@ std::pair<double, double> positive_directions(Point &p1, Point &p2) {
 }
 
 std::pair<double, double> range_intersect(std::pair< double, double > r1, std::pair< double, double > r2) {
-    std::pair< double, double > res;
-
     double delta = r1.first;
 
     // normalize
@@ -109,33 +107,24 @@ std::pair<double, double> range_intersect(std::pair< double, double > r1, std::p
     if (r1.second < 0) {
         r1.second += 2 * PI;
     }
-    r2.first -= delta;
-    if (r2.first < 0) {
-        r2.first += 2 * PI;
+    r2.first = standard_angle(r2.first - delta);
+    if (r2.first > PI) {
+        r2.first -= 2 * PI;
     }
-    r2.second -= r1.first;
-    if (r2.second < 0) {
-        r2.second += 2 * PI;
-    }
+    r2.second = standard_angle(r2.second - delta);
 
-    // now r1 \in [0, PI)
-    if (r2.first > r2.second) {
-        r2.second += 2 * PI;
-    }
+    // printf("changed angles: %.3f, %.3f, %.3f, %.3f\n", r1.first, r1.second, r2.first, r2.second);
 
-    if (r2.first < r1.second) {
-        res = std::make_pair(r2.first, r1.second);
-    } else if (r2.second > 2 * PI) {
-        res = std::make_pair(0, min(r1.second, r2.second - 2 * PI));
+    double range_start = max(r1.first, r2.first);
+    double range_end = min(r1.second, r2.second);
+    // printf("range start/end: %.3f, %.3f, \n", range_start, range_end);
+
+    if (range_start > range_end) {
+        return std::make_pair(-1., -1.);
     } else {
-        res = std::make_pair(-1, -1);
-        return res;
+        return std::make_pair(standard_angle(range_start + delta),
+                              standard_angle(range_end + delta));
     }
-
-    res.first  = standard_angle(res.first  + delta);
-    res.second = standard_angle(res.second + delta);
-
-    return res;
 
     //  std::pair< double, double> res;
     //  if (r1.first < r1.second && r2.first < r2.second) {
