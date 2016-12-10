@@ -1,14 +1,19 @@
 #ifndef INC_6_854_PROJECT_HELPERS_H
 #define INC_6_854_PROJECT_HELPERS_H
 
+#include <vector>
+
 #define PI 3.14159265
 
-double l2norm(double a[], double b[], int size);
+typedef Point std::vector< double >;
 
-int loadData(char* path, double* values);
+double l2norm(Point a, Point b);
 
-double angle(double* vector);
+std::vector< Point > loadData(std::string path);
 
-void positive_directions(double* vector, double* overlap, double* directions);
+double angle(Point vector);
 
-#endif //INC_6_854_PROJECT_HELPERS_H
+std::pair< double, double > positive_directions(Point vector, std::pair< double, double > overlap);
+
+#endif // INC_6_854_PROJECT_HELPERS_H
+
