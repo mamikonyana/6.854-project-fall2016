@@ -27,10 +27,15 @@ data/gaussian_%.csv:
 build/main:
 	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp src/helpers.cpp src/naive.cpp src/bce.h
 
-test: TEST=naive
+test_files = $(wildcard ${TEST_DIR}/test_*.cpp)
+
 test:
+	@echo test files ${test_files}
 	@rm -f ${TEST_DIR}/tmp
-	${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp ${TEST_DIR}/test_${TEST}.cpp ${PROJECT_SRC}/naive.cpp ${PROJECT_SRC}/helpers.cpp ${PROJECT_SRC}/bce.cpp
-	./${TEST_DIR}/tmp
+	for testfile in ${test_files} ; do \
+		echo "==== running $$testfile .." ; \
+		${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp $$testfile ${PROJECT_SRC}/naive.cpp ${PROJECT_SRC}/helpers.cpp ${PROJECT_SRC}/bce.cpp ; \
+		./${TEST_DIR}/tmp ; \
+	done
 .PHONY: test
 
