@@ -33,8 +33,6 @@ std::vector<Point> load_csv_data(std::string path) {
         num_columns += 1;
     }
 
-    printf("there are %d columns\n", num_columns);
-
     while (fgets(line, 1024, stream)) {
         Point p(num_columns);
         token = strtok(line, DELIMITER);

@@ -23,10 +23,10 @@ void test_diam2d() {
 
 void test_monotonicity_11gon() {
     std::vector<Point> data = load_csv_data("data/11-gon.csv");
-    std::vector<int> naive_a = naive_monotonicity_2d(data);
-    for (int i = 0; i < naive_a.size(); i++) {
-        printf("%d\n", naive_a[i]);
-    }
+    std::vector<int> naive_answer = naive_monotonicity_2d(data);
+    std::vector<int> exp_answer = {6, 7, 8, 9, 10, 10, 10, 10, 10, 10, 10};
+    assert(naive_answer == exp_answer);
+    printf("PASS: monotonicity_11gon\n");
 }
 
 int main() {
