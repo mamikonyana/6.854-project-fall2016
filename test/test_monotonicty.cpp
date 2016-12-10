@@ -9,18 +9,6 @@
 
 #include "check.h"
 
-void test_diam2d() {
-    std::vector<Point> points = {{0.0, 0.0},
-                                 {0.2, 0.2},
-                                 {0.5, 0.5},
-                                 {1.0, 1.0},
-                                 {2.0, 2.0},
-                                 {2.5, 2.5}};
-
-    std::vector<int> exp_answer = {2, 2, 3, 3, 5, 5};
-    check_vectors(exp_answer, naive_diameter(points), "naive diam2d");
-}
-
 void test_monotonicity_simple_triangle() {
     std::vector<Point> points = {{2.0, 0.0},
                                  {0.0, 1.0},
@@ -38,10 +26,29 @@ void test_monotonicity_11gon() {
     check_vectors(exp_answer, bce_monotonicity_2d(data), "bce monotonicty_11gon");
 }
 
+void test_monotonicity_bce_vs_naive(std::string file) {
+    std::vector<Point> data = load_csv_data(file.c_str());
+
+    auto naive_answer = naive_monotonicity_2d(data);
+    auto bce_answer   = bce_monotonicity_2d(data);
+
+    check_vectors(naive_answer, bce_answer, "bce vs naive: " + file);
+
+    double total_jump = 0;
+    for (int i = 0; i < bce_answer.size(); ++i) {
+        total_jump += bce_answer[i] - i + 1;
+    }
+    printf("    average jump %.2f", total_jump / bce_answer.size());
+
+    printf("\n");
+}
+
 int main() {
-    test_diam2d();
     test_monotonicity_simple_triangle();
     test_monotonicity_11gon();
+    test_monotonicity_bce_vs_naive("data/gaussian_20.csv");
+    test_monotonicity_bce_vs_naive("data/gaussian_200.csv");
+    test_monotonicity_bce_vs_naive("data/gaussian_2000.csv");
     return 0;
 }
 
