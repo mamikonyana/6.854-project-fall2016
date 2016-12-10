@@ -27,11 +27,11 @@ std::vector< int > naive_monotonicity_2d(std::vector< Point >& points) {
             std::pair< double, double > range;
 
             if (i == j) {
-                range = positive_directions(points[j]);
+                range = positive_directions(points[j], points[j + 1]);
             } else {
-                range = positive_directions(points[j], range);
+                range = positive_directions(points[j], points[j + 1], range);
             }
-            // printf(" ================ i: %d, j: %d, angles: %.1f, %1f \n", i, j, range[0] * 180 / PI, range[1] * 180 / PI);
+            printf(" ================ i: %d, j: %d, angles: %.1f, %1f \n", i, j, range.first * 180 / PI, range.second * 180 / PI);
             if (range.first < 0) {
                 break;
             }

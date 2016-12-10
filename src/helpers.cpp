@@ -58,9 +58,9 @@ double standard_angle(double angle) {
     return 2 * PI * fraction;
 }
 
-double angle(Point &vector) {
-    double dx = vector[2] - vector[0];
-    double dy = vector[3] - vector[1];
+double relative_angle(Point &p1, Point& v2) {
+    double dx = v2[0] - p1[0];
+    double dy = v2[1] - v2[1];
     if (dx == 0) {
         if (dy > 0) {
             return PI / 2;
@@ -92,24 +92,24 @@ double min(double a, double b) {
     return b;
 }
 
-std::pair<double, double> positive_directions(Point &vector) {
-    double direction = angle(vector);
+std::pair<double, double> positive_directions(Point &p1, Point &p2) {
+    double direction = relative_angle(p1, p2);
     double range_begin = standard_angle(direction - PI / 2);
     double range_end = standard_angle(direction + PI / 2);
 
     return std::make_pair(range_begin, range_end);
 }
 
-std::pair<double, double> positive_directions(Point &vector, std::pair<double, double> overlap) {
-    double direction = angle(vector);
+std::pair<double, double> positive_directions(Point &p1, Point &p2, std::pair<double, double> range) {
+    double direction = relative_angle(p1, p2);
     double range_begin = standard_angle(direction - PI / 2);
     double range_end = standard_angle(direction + PI / 2);
 
     if (range_begin > range_end) {
         range_end += 2 * PI;
     }
-    double before_begin = overlap.first;
-    double before_end = overlap.second;
+    double before_begin = range.first;
+    double before_end = range.second;
     if (before_begin > before_end) {
         before_end += 2 * PI;
     }

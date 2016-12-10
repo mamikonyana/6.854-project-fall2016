@@ -18,7 +18,7 @@ void test_diam2d() {
     std::vector<int> answer = naive_diameter(points);
     std::vector<int> exp_answer = {2, 2, 3, 3, 5, 5};
     assert(answer == exp_answer);
-    printf("PASS: diam2d");
+    printf("PASS: diam2d\n");
 }
 
 int main() {
