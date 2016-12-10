@@ -1,9 +1,11 @@
 #include "bce.h"
 
-void bce_diameter_2d(double *points, int size, int *answer) {
-
+std::vector<int> bce_monotonicity_2d(std::vector<Position> &points) {
+    std::vector<int> answer(points.size());
+    return answer;
 }
 
-void bce_monotonicity_2d(double *points, int size, int *answer) {
-
+std::vector<int> bce_diameter_2d(std::vector<Position> &points) {
+    std::vector<int> answer(points.size());
+    return answer;
 }
