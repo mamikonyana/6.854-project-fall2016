@@ -13,7 +13,7 @@ void assert_equal(double d1, double d2, double prec, std::string message) {
         return;
     } else {
         printf("Checking %f < %f (with prec %f), which is wrong", d1, d2, prec);
-        printf(message.c_str());
+        printf("%s", message.c_str());
         assert(std::abs(d1 - d2) < prec);
     }
 }
