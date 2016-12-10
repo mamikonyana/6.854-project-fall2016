@@ -59,14 +59,18 @@ std::vector<int> bce_monotonicity_2d(std::vector<Point> &points) {
             }
         }
 
+        if (next == n - 1) {
+            while (prev < n) {
+                answer[prev++] = n-1;
+            }
+            break;
+        }
+
         prev = curr;
         curr = next;
     }
 
     // printf("anchor: %d\n", curr);
-    while (prev < n) {
-        answer[prev++] = n-1;
-    }
     return answer;
 }
 
