@@ -4,7 +4,9 @@
 
 
 
-std::vector<int> prat_chan_diameter_2d(std::vector<Point> &points) {
+std::vector<int> chan_prat_diameter_2d(std::vector<Point> &points) {
     // TODO: Implement.
+    RangeTree rt = RangeTree(points);
+
     return std::vector<int>(points.size());
 }

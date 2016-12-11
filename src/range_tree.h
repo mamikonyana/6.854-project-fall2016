@@ -5,20 +5,13 @@
 #include "helpers.h"
 #include "polyarc.h"
 
-struct node {
-    node() {}
-
-    int index;
-    node *left;
-    node *right;
-    node *parent;
-};
-
 class RangeTree {
 public:
     RangeTree(std::vector<Point> points);
 
     int getIndex();
+
+    RangeTree * locate_tree(int index);
 
     RangeTree * getParent();
 
