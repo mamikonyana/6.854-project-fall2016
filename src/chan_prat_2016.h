@@ -7,3 +7,4 @@
 std::vector<int> prat_chan_diameter_2d(std::vector<Point> &points);
 
 #endif //INC_6_854_PROJECT_CHAN_PRAT_2016_H
+

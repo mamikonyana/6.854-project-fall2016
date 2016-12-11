@@ -2,6 +2,10 @@
 #include <math.h>
 #include <stdlib.h>
 
+bool fequal(double a, double b) {
+    return fabs(a - b) < EPS;
+}
+
 double difference_l2norm(Point a, Point b) {
     double norm = 0.0;
     for (int i = 0; i < a.size(); i++) {

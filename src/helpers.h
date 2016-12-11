@@ -4,10 +4,14 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <cmath>
 
-#define PI 3.14159265
+const double PI  = 2 * acos(0.0);
+const double EPS = 1e-9;
 
 typedef std::vector<double> Point;
+
+bool fequal(double a, double b);
 
 double difference_l2norm(Point a, Point b);
 

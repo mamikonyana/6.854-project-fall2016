@@ -25,16 +25,17 @@ data/gaussian_%.csv:
 	python datagen/moving_gaussian.py --num-points $* -o data/gaussian_$*.csv --speed 1 --covariance 0.2 0 0 1
 
 build/main:
-	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp src/helpers.cpp src/naive.cpp src/bce.cpp
+	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp src/helpers.cpp src/naive.cpp src/bce.cpp src/polyarc.cpp
 
-test_files = $(wildcard ${TEST_DIR}/test_*.cpp)
+# test_files = $(wildcard ${TEST_DIR}/test_*.cpp)
+test_files = ${TEST_DIR}/test_polyarc.cpp
 
 test:
 	@echo test files ${test_files}
 	@rm -f ${TEST_DIR}/tmp
 	for testfile in ${test_files} ; do \
 		echo "==== running $$testfile .." ; \
-		${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp $$testfile ${PROJECT_SRC}/naive.cpp ${PROJECT_SRC}/helpers.cpp ${PROJECT_SRC}/bce.cpp ; \
+		${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp $$testfile ${PROJECT_SRC}/naive.cpp ${PROJECT_SRC}/helpers.cpp ${PROJECT_SRC}/bce.cpp ${PROJECT_SRC}/polyarc.cpp ; \
 		./${TEST_DIR}/tmp ; \
 	done
 .PHONY: test
