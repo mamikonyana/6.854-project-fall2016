@@ -5,6 +5,10 @@
 
 struct Point2D {
     double x, y;
+
+    bool operator == (Point2D other) {
+        return fequal(x, other.x) && fequal(y, other.y);
+    }
 };
 
 struct Vertex {
@@ -23,15 +27,20 @@ private:
     PolyArc(Vertex vertex);
 
     PolyArc(Vertex v1, Vertex v2);
+
+    void reorder();
 public:
     PolyArc();
+
     PolyArc(Point2D center);
 
     bool isCircle();
 
     bool isEmpty();
 
-    bool isDegenerate(); // if only 1 point
+    bool isPoint(); // if only 1 point
+
+    int nArcs();
 
     PolyArc intersect(PolyArc other);
 };
@@ -42,6 +51,10 @@ public:
 int direction(Point2D origin, Point2D first, Point2D second);
 
 std::vector< Point2D > intersect_circles(Point2D c1, Point2D c2);
+
+std::vector< Point2D > intersect_circle_arc(Point2D center, Point2D arc_center, Point2D a, Point2D b);
+
+bool circle_contains(Point2D center, Point2D pt);
 
 #endif // POLYARC_H
 
