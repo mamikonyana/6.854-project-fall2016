@@ -78,7 +78,7 @@ PolyArc PolyArc::intersect(PolyArc other) {
     }
 
     if (other.isPoint()) {
-        Point2D& pt = other.upper[0].location;
+        Point2D &pt = other.upper[0].location;
         if (isCircle()) {
             if (circle_contains(singleCircle, pt)) {
                 return other;
@@ -86,12 +86,12 @@ PolyArc PolyArc::intersect(PolyArc other) {
             return PolyArc();
         }
 
-        for (auto& vertex : upper) {
+        for (auto &vertex : upper) {
             if (!circle_contains(vertex.arch_center, vertex.location)) {
                 return PolyArc();
             }
         }
-        for (auto& vertex : lower) {
+        for (auto &vertex : lower) {
             if (!circle_contains(vertex.arch_center, vertex.location)) {
                 return PolyArc();
             }
@@ -218,19 +218,51 @@ PolyArc PolyArc::intersect(PolyArc other) {
 
 std::vector<Vertex> PolyArc::getVertices() {
     if (isEmpty()) {
-        return std::vector< Vertex > ();
+        return std::vector<Vertex>();
     }
     if (isPoint()) {
         return upper;
     }
-    std::vector< Vertex > vertices(upper.size() + lower.size() - 2);
+    std::vector<Vertex> vertices(upper.size() + lower.size() - 2);
     vertices.insert(vertices.begin(), upper.begin(), upper.end());
     vertices.insert(vertices.end(), lower.rbegin() + 1, lower.rend() - 1);
     return vertices;
 }
 
+
 bool PolyArc::contains(Point2D query_point) {
-    return false;
+    int upper_left = find_neighbours(upper, query_point.x);
+    if (upper_left == -1) {
+        return false;
+    }
+    if (!circle_contains(upper[upper_left].arch_center, query_point)) {
+        return false;
+    }
+    int lower_left = find_neighbours(lower, query_point.x);
+    // lower_left can't be -1, because upper_left is not -1.
+    if (!circle_contains(lower[lower_left].arch_center, query_point)) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * @param vector
+ * @param x
+ * @return return -1, if x has only one neighbour. otherwise index of the left neighbour.
+ */
+int PolyArc::find_neighbours(std::vector<Vertex> vector, double query_x) {
+    // TODO: make efficient (binary search style).
+    if (vector[0].location.x > query_x) {
+        return -1; // No left neighbour.
+    }
+    for (int i = 1; i < vector.size(); i++) {
+        if (vector[i].location.x > query_x) {
+            // Found right neighbour.
+            return i - 1;
+        }
+    }
+    return -1; // No right neighbour.
 }
 
 ////////////// helpers ////////////////
@@ -246,7 +278,7 @@ int direction(Point2D origin, Point2D first, Point2D second) {
     return 0;
 }
 
-std::vector< Point2D > intersect_circles(Point2D c1, Point2D c2) {
+std::vector<Point2D> intersect_circles(Point2D c1, Point2D c2) {
     // http://e-maxx.ru/algo/circles_intersection
     assert(!(c1 == c2)); // assume the centers are different
 
@@ -260,14 +292,14 @@ std::vector< Point2D > intersect_circles(Point2D c1, Point2D c2) {
 
     Point2D p0 = {-a * c / (a * a + b * b), -b * c / (a * a + b * b)};
     if (c * c > (a * a + b * b) + EPS) {
-        return std::vector< Point2D >();
+        return std::vector<Point2D>();
     }
     if (fequal(c * c, a * a + b * b)) {
         p0.x += c1.x;
         p0.y += c1.y;
-        return std::vector< Point2D >(1, p0);
+        return std::vector<Point2D>(1, p0);
     }
-    double d = 1- c * c / (a * a + b * b);
+    double d = 1 - c * c / (a * a + b * b);
     double mult = sqrt(d / (a * a + b * b));
     double ax, ay, bx, by;
     Point2D p1 = {p0.x + b * mult, p0.y - a * mult};
@@ -282,7 +314,7 @@ std::vector< Point2D > intersect_circles(Point2D c1, Point2D c2) {
         std::swap(p1, p2);
     }
 
-    return std::vector< Point2D >({p1, p2});
+    return std::vector<Point2D>({p1, p2});
 }
 
 bool circle_contains(Point2D center, Point2D pt) {
@@ -293,11 +325,11 @@ bool on_arc(Point2D center, Point2D a, Point2D b, Point2D pt) {
     return direction(center, a, pt) < 0 && direction(center, pt, b) < 0;
 }
 
-std::vector< Point2D > intersect_circle_arc(Point2D center, Point2D arc_center, Point2D a, Point2D b) {
+std::vector<Point2D> intersect_circle_arc(Point2D center, Point2D arc_center, Point2D a, Point2D b) {
     auto circle_intersections = intersect_circles(center, arc_center);
-    std::vector< Point2D > res;
+    std::vector<Point2D> res;
 
-    for (Point2D& pt : circle_intersections) {
+    for (Point2D &pt : circle_intersections) {
         if (on_arc(arc_center, a, b, pt)) {
             res.push_back(pt);
         }

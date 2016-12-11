@@ -28,6 +28,7 @@ private:
     PolyArc(Vertex vertex);
 
     PolyArc(Vertex v1, Vertex v2);
+    int find_neighbours(std::vector<Vertex> vector, double x);
 
     void reorder();
 public:
@@ -48,6 +49,7 @@ public:
     PolyArc intersect(PolyArc other);
 
     std::vector<Vertex> getVertices();
+
 };
 
 //////// helpers //////
