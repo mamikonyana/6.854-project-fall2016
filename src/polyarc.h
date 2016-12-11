@@ -19,7 +19,8 @@ struct Vertex {
 
 class PolyArc {
 private:
-    std::vector<Vertex> vertices;
+    std::vector< Vertex > upper;
+    std::vector< Vertex > lower;
 
     bool mIsCircle;
     Point2D singleCircle;

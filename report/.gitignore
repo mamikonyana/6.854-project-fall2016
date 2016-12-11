@@ -1,1 +1,7 @@
 latex.out/
+*.aux
+*.log
+*.synctex.gz
+*.blg
+*.bbl
+

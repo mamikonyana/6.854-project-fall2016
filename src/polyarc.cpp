@@ -13,25 +13,29 @@ PolyArc::PolyArc(Point2D center) {
 }
 
 PolyArc::PolyArc(Vertex v) {
-    vertices.push_back(v);
+    upper.push_back(v);
+    lower.push_back(v);
     mIsCircle = false;
 }
 
 PolyArc::PolyArc(Vertex v1, Vertex v2) {
-    if (v1.location.x > v2.location.x) {
+    if (v1.location.x > v2.location.x + EPS ||
+        (fequal(v1.location.x, v2.location.x) && v1.location.y > v2.location.y)) {
         std::swap(v1, v2);
     }
     mIsCircle = false;
-    vertices.push_back(v1);
-    vertices.push_back(v2);
+    lower.push_back(v1);
+    lower.push_back(v2);
+    upper.push_back(v1);
+    upper.push_back(v2);
 }
 
 bool PolyArc::isEmpty() {
-    return !mIsCircle && vertices.size() == 0;
+    return !mIsCircle && upper.size() == 0;
 }
 
 bool PolyArc::isPoint() {
-    return !mIsCircle && vertices.size() == 1;
+    return !mIsCircle && upper.size() == 1;
 }
 
 bool PolyArc::isCircle() {
@@ -49,7 +53,7 @@ int PolyArc::nArcs() {
         return 0;
     }
 
-    return vertices.size();
+    return upper.size() - 1 + lower.size() - 1;
 }
 
 PolyArc PolyArc::intersect(PolyArc other) {
@@ -58,9 +62,9 @@ PolyArc PolyArc::intersect(PolyArc other) {
     }
 
     if (isPoint() && other.isPoint()) {
-        if (fequal(vertices[0].location.x, other.vertices[0].location.x) &&
-            fequal(vertices[0].location.y, other.vertices[0].location.y)) {
-            return PolyArc(vertices[0]);
+        if (fequal(upper[0].location.x, other.upper[0].location.x) &&
+            fequal(upper[0].location.y, other.upper[0].location.y)) {
+            return PolyArc(upper[0]);
         }
         return PolyArc();
     }
@@ -70,7 +74,7 @@ PolyArc PolyArc::intersect(PolyArc other) {
     }
 
     if (other.isPoint()) {
-        Point2D& pt = other.vertices[0].location;
+        Point2D& pt = other.upper[0].location;
         if (isCircle()) {
             if (circle_contains(singleCircle, pt)) {
                 return other;
@@ -78,15 +82,24 @@ PolyArc PolyArc::intersect(PolyArc other) {
             return PolyArc();
         }
 
-        for (auto& vertex : vertices) {
+        for (auto& vertex : upper) {
             if (!circle_contains(vertex.arch_center, vertex.location)) {
                 return PolyArc();
             }
         }
+        for (auto& vertex : lower) {
+            if (!circle_contains(vertex.arch_center, vertex.location)) {
+                return PolyArc();
+            }
+        }
+
         return other;
     }
 
     if (isCircle() && other.isCircle()) {
+        if (singleCircle == other.singleCircle) {
+            return *this;
+        }
         auto intersections = intersect_circles(singleCircle, other.singleCircle);
         if (intersections.size() == 0) {
             return PolyArc();
@@ -108,98 +121,107 @@ PolyArc PolyArc::intersect(PolyArc other) {
     // * this is a 2 vertex polyarc and other is a circle OR
     // * both are normal polyarcs
 
-    if (other.isCircle()) {
-        assert(nArcs() == 2);
+    // if (other.isCircle()) {
+    //     assert(nArcs() == 2);
 
-        Point2D a  = vertices[0].location;
-        Point2D c1 = vertices[0].arch_center;
-        Point2D b = vertices[1].location;
-        Point2D c2 = vertices[1].arch_center;
+    //     Point2D a  = upper[0].location;
+    //     Point2D c1 = upper[0].arch_center;
+    //     Point2D b = lower[1].location;
+    //     Point2D c2 = lower[1].arch_center;
 
-        // printf("arc1: %.2f %.2f ;  %.2f %.2f;  %.2f %.2f\n", c1.x, c1.y, a.x, a.y, b.x, b.y);
-        // printf("arc2: %.2f %.2f ;  %.2f %.2f;  %.2f %.2f\n", c2.x, c2.y, b.x, b.y, a.x, a.y);
+    //     // printf("arc1: %.2f %.2f ;  %.2f %.2f;  %.2f %.2f\n", c1.x, c1.y, a.x, a.y, b.x, b.y);
+    //     // printf("arc2: %.2f %.2f ;  %.2f %.2f;  %.2f %.2f\n", c2.x, c2.y, b.x, b.y, a.x, a.y);
 
-        auto intersections1 = intersect_circle_arc(other.singleCircle, c1, a, b);
-        auto intersections2 = intersect_circle_arc(other.singleCircle, c2, b, a);
+    //     auto intersections1 = intersect_circle_arc(other.singleCircle, c1, a, b);
+    //     auto intersections2 = intersect_circle_arc(other.singleCircle, c2, b, a);
 
-        // printf("intersections1\n");
-        // for (auto x : intersections1) {
-        //     printf("%.2f %.2f\n", x.x, x.y);
-        // }
+    //     // printf("intersections1\n");
+    //     // for (auto x : intersections1) {
+    //     //     printf("%.2f %.2f\n", x.x, x.y);
+    //     // }
 
-        // printf("intersections2\n");
-        // for (auto x : intersections2) {
-        //     printf("%.2f %.2f\n", x.x, x.y);
-        // }
+    //     // printf("intersections2\n");
+    //     // for (auto x : intersections2) {
+    //     //     printf("%.2f %.2f\n", x.x, x.y);
+    //     // }
 
-        assert(intersections1.size() + intersections2.size() <= 2);
+    //     assert(intersections1.size() + intersections2.size() <= 2);
 
-        if (intersections1.size() == 0 && intersections2.size() == 0) {
-            if (circle_contains(other.singleCircle, a)) {
-                assert(circle_contains(other.singleCircle, b));
-                return *this;
-            }
-            return PolyArc();
-        }
+    //     if (intersections1.size() == 0 && intersections2.size() == 0) {
+    //         if (circle_contains(other.singleCircle, a)) {
+    //             assert(circle_contains(other.singleCircle, b));
+    //             return *this;
+    //         }
+    //         return PolyArc();
+    //     }
 
-        if (intersections2.size() > intersections1.size()) { // cases (1, 0); (2, 0)
-            std::swap(intersections1, intersections2);
-            std::swap(c1, c2);
-        }
+    //     if (intersections2.size() > intersections1.size()) { // cases (1, 0); (2, 0)
+    //         std::swap(intersections1, intersections2);
+    //         std::swap(c1, c2);
+    //     }
 
-        if (intersections1.size() == 2) {
-            if (direction(c1, intersections1[0], intersections1[1]) > 0) {
-                std::swap(intersections1[0], intersections1[1]);
-            }
-            return PolyArc(Vertex{intersections1[0], c1, 0},
-                           Vertex{intersections1[1], other.singleCircle, 0});
-        }
+    //     if (intersections1.size() == 2) {
+    //         if (direction(c1, intersections1[0], intersections1[1]) > 0) {
+    //             std::swap(intersections1[0], intersections1[1]);
+    //         }
+    //         return PolyArc(Vertex{intersections1[0], c1, 0},
+    //                        Vertex{intersections1[1], other.singleCircle, 0});
+    //     }
 
-        if (intersections1.size() == 1 && intersections2.size() == 0) { // the second one doesn't intersect
-            return PolyArc(Vertex{intersections1[0], other.singleCircle, -1});
-        }
+    //     if (intersections1.size() == 1 && intersections2.size() == 0) { // the second one doesn't intersect
+    //         return PolyArc(Vertex{intersections1[0], other.singleCircle, -1});
+    //     }
 
-        // both intersect once; in this case the swap of intersections above wouldn't happen
-        auto& p1 = intersections1[0];
-        auto& p2 = intersections2[0];
+    //     // both intersect once; in this case the swap of intersections above wouldn't happen
+    //     auto& p1 = intersections1[0];
+    //     auto& p2 = intersections2[0];
 
-        if (p1 == p2) {
-            return PolyArc(Vertex{p1, other.singleCircle, 0});
-        }
+    //     if (p1 == p2) {
+    //         return PolyArc(Vertex{p1, other.singleCircle, 0});
+    //     }
 
-        auto res = PolyArc();
-        if (circle_contains(other.singleCircle, a)) {
-            res.vertices.push_back(Vertex{a, c1, 0});
-            res.vertices.push_back(Vertex{p1, other.singleCircle, 0});
-            res.vertices.push_back(Vertex{p2, c2, 0});
-        } else if (circle_contains(other.singleCircle, b)) {
-            res.vertices.push_back(Vertex{b, c2, 0});
-            res.vertices.push_back(Vertex{p2, other.singleCircle, 0});
-            res.vertices.push_back(Vertex{p1, c1, 0});
-        } else {
-            assert(false);
-        }
-        res.reorder();
-        return res;
-    }
+    //     auto res = PolyArc();
+    //     if (circle_contains(other.singleCircle, a)) {
+    //         res.vertices.push_back(Vertex{a, c1, 0});
+    //         res.vertices.push_back(Vertex{p1, other.singleCircle, 0});
+    //         res.vertices.push_back(Vertex{p2, c2, 0});
+    //     } else if (circle_contains(other.singleCircle, b)) {
+    //         res.vertices.push_back(Vertex{b, c2, 0});
+    //         res.vertices.push_back(Vertex{p2, other.singleCircle, 0});
+    //         res.vertices.push_back(Vertex{p1, c1, 0});
+    //     } else {
+    //         assert(false);
+    //     }
+    //     res.reorder();
+    //     return res;
+    // }
 
     // TODO
 
     return PolyArc();
 }
 
-void PolyArc::reorder() {
-    int leftmost = 0;
-    for (int i = 1; i < vertices.size(); ++i) {
-        if (vertices[i].location.x < vertices[leftmost].location.x) {
-            leftmost = i;
-        }
-    }
-
-    std::rotate(vertices.begin(), vertices.begin() + leftmost, vertices.end());
-}
+// void PolyArc::reorder() {
+//     int leftmost = 0;
+//     for (int i = 1; i < vertices.size(); ++i) {
+//         if (vertices[i].location.x < vertices[leftmost].location.x) {
+//             leftmost = i;
+//         }
+//     }
+// 
+//     std::rotate(vertices.begin(), vertices.begin() + leftmost, vertices.end());
+// }
 
 std::vector<Vertex> PolyArc::getVertices() {
+    if (isEmpty()) {
+        return std::vector< Vertex > ();
+    }
+    if (isPoint()) {
+        return upper;
+    }
+    std::vector< Vertex > vertices(upper.size() + lower.size() - 2);
+    vertices.insert(vertices.begin(), upper.begin(), upper.end());
+    vertices.insert(vertices.end(), lower.rbegin() + 1, lower.rend() - 1);
     return vertices;
 }
 
