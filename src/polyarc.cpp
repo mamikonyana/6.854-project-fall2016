@@ -222,7 +222,7 @@ int direction(Point2D origin, Point2D first, Point2D second) {
 
 std::vector< Point2D > intersect_circles(Point2D c1, Point2D c2) {
     // http://e-maxx.ru/algo/circles_intersection
-    assert(!fequal(c1.x, c2.x) || !fequal(c1.y, c2.y)); // assume the centers are different
+    assert(!(c1 == c2)); // assume the centers are different
 
     // shift c1 to origin
     c2.x -= c1.x;

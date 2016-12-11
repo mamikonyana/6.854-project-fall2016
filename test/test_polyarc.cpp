@@ -104,12 +104,42 @@ void test_intersect_circles_3_normal_non_pairwise() {
     printf("PASS: intersect_circles_3_normal_non_pairwise\n\n");
 }
 
-void test_contains() {
-    std::vector<Point> data = load_csv_data("data/triangle-radius0.55.csv");
+void test_intersect_circles_3_degenerate() {
+    printf("START: intersect_circles_3_degenerate\n");
+
+    std::vector< Point > data = load_csv_data("data/3-circles-degenerate.csv");
     PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
     PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
     PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
 
+    PolyArc pa12  = pa1.intersect(pa2);
+
+    PolyArc pa123 = pa12.intersect(pa3);
+
+    auto vertices = pa123.getVertices();
+    assert(vertices.size() == 1);
+
+    assert_equal(vertices[0].location.x, 0.0, 1e-5);
+    assert_equal(vertices[0].location.y, 0.0, 1e-5);
+
+    PolyArc pa13 = pa3.intersect(pa1);
+    pa123 = pa13.intersect(pa2);
+
+    vertices = pa123.getVertices();
+    assert(vertices.size() == 1);
+
+    assert_equal(vertices[0].location.x, 0.0, 1e-5);
+    assert_equal(vertices[0].location.y, 0.0, 1e-5);
+
+    printf("PASS: intersect_circles_3_degenerate\n\n");
+}
+
+void test_contains() {
+    std::vector<Point> data = load_csv_data("data/triangle-radius0.55.csv");
+
+    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
+    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
+    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
     PolyArc pa12 = pa1.intersect(pa2);
 
     assert(pa12.contains(Point2D{0., 0.}));
@@ -122,13 +152,13 @@ void test_contains() {
     printf("PASS: test_contains\n\n");
 }
 
-
 int main() {
     test_direction();
-    test_contains();
     test_intersect_circles();
     test_intersect_circles_3_normal();
     test_intersect_circles_3_normal_non_pairwise();
+    test_intersect_circles_3_degenerate();
+    test_contains();
     return 0;
 }
 
