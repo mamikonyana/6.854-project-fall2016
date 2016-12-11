@@ -40,6 +40,8 @@ public:
 
     bool isPoint(); // if only 1 point
 
+    bool contains(Point2D query_point);
+
     int nArcs();
 
     PolyArc intersect(PolyArc other);

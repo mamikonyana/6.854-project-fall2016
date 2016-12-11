@@ -203,6 +203,10 @@ std::vector<Vertex> PolyArc::getVertices() {
     return vertices;
 }
 
+bool PolyArc::contains(Point2D query_point) {
+    return false;
+}
+
 ////////////// helpers ////////////////
 
 int direction(Point2D origin, Point2D first, Point2D second) {
