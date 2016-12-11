@@ -27,16 +27,23 @@ data/gaussian_%.csv:
 build/main:
 	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp src/helpers.cpp src/naive.cpp src/bce.cpp src/polyarc.cpp
 
-# test_files = $(wildcard ${TEST_DIR}/test_*.cpp)
-test_files = ${TEST_DIR}/test_polyarc.cpp
+test_files = $(wildcard ${TEST_DIR}/test_*.cpp)
+all_cpp_files = $(wildcard ${PROJECT_SRC}/*.cpp)
+cpp_files = $(filter-out ${PROJECT_SRC}/main.cpp, $(all_cpp_files))
 
 test:
 	@echo test files ${test_files}
 	@rm -f ${TEST_DIR}/tmp
 	for testfile in ${test_files} ; do \
 		echo "==== running $$testfile .." ; \
-		${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp $$testfile ${PROJECT_SRC}/naive.cpp ${PROJECT_SRC}/helpers.cpp ${PROJECT_SRC}/bce.cpp ${PROJECT_SRC}/polyarc.cpp ; \
+		${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp $$testfile ${cpp_files} ; \
 		./${TEST_DIR}/tmp ; \
 	done
 .PHONY: test
+
+testcurrent: FILE=test/test_polyarc.cpp
+testcurrent:
+	@echo ==== running ${FILE}
+	${CC} ${CCFLAGS} -I${PROJECT_SRC}/ -o ${TEST_DIR}/tmp ${FILE} ${cpp_files}
+	./${TEST_DIR}/tmp 
 
