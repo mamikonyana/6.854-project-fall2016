@@ -4,8 +4,7 @@
 #include <vector>
 #include "helpers.h"
 
-struct node
-{
+struct node {
     node() {}
 
     int index;
@@ -18,10 +17,21 @@ class RangeTree {
 public:
     RangeTree(std::vector<Point> points);
 
-    RangeTree();
+    int getIndex();
+
+    RangeTree * getParent();
+
+    RangeTree * leftChild();
+
+    RangeTree * rightChild();
 
 private:
-    node *root;
+    RangeTree(std::vector<Point> &points, int first, int last, RangeTree *parent);
+
+    RangeTree *left;
+    RangeTree *right;
+    RangeTree *parent;
+    int index;
 };
 
 
