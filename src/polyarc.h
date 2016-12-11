@@ -17,12 +17,23 @@ class PolyArc {
 private:
     std::vector<Vertex> vertices;
 
+    bool mIsCircle;
+    Point2D singleCircle;
+
+    PolyArc(Vertex vertex);
+
+    PolyArc(Vertex v1, Vertex v2);
 public:
+    PolyArc();
+    PolyArc(Point2D center);
+
+    bool isCircle();
+
+    bool isEmpty();
+
+    bool isDegenerate(); // if only 1 point
+
     PolyArc intersect(PolyArc other);
-
-    PolyArc intersect(Point2D circle);
-
-    static PolyArc fromCircles(Point2D c1, Point2D c2);
 };
 
 //////// helpers //////

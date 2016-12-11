@@ -4,15 +4,57 @@
 #include "helpers.h"
 #include "polyarc.h"
 
+PolyArc::PolyArc() {
+}
+
+PolyArc::PolyArc(Point2D center) {
+    mIsCircle = true;
+    singleCircle = center;
+}
+
+PolyArc::PolyArc(Vertex v) {
+    vertices.push_back(v);
+    mIsCircle = false;
+}
+
+PolyArc::PolyArc(Vertex v1, Vertex v2) {
+    if (v1.location.x > v2.location.x) {
+        std::swap(v1, v2);
+    }
+    mIsCircle = false;
+    vertices.push_back(v1);
+    vertices.push_back(v2);
+}
+
+bool PolyArc::isEmpty() {
+    return !mIsCircle && vertices.size() == 0;
+}
+
+bool PolyArc::isDegenerate() {
+    return !mIsCircle && vertices.size() == 1;
+}
+
+bool PolyArc::isCircle() {
+    return mIsCircle;
+}
+
 PolyArc PolyArc::intersect(PolyArc other) {
-    return PolyArc();
-}
+    if (isCircle() && other.isCircle()) {
+        auto intersections = intersect_circles(singleCircle, other.singleCircle);
+        if (intersections.size() == 0) {
+            return PolyArc();
+        }
 
-PolyArc PolyArc::intersect(Point2D circle) {
-    return PolyArc();
-}
+        if (intersections.size() == 1) {
+            Vertex vertex = {intersections[0], singleCircle, -1};
+            return PolyArc(vertex);
+        }
 
-PolyArc PolyArc::fromCircles(Point2D c1, Point2D c2) {
+        PolyArc(Vertex{intersections[0], singleCircle, 0}, Vertex{intersections[1], other.singleCircle, 0});
+    }
+
+    // TODO
+
     return PolyArc();
 }
 
