@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "helpers.h"
+#include "polyarc.h"
 
 struct node {
     node() {}
@@ -32,6 +33,7 @@ private:
     RangeTree *right;
     RangeTree *parent;
     int index;
+    PolyArc polyArc;
 };
 
 
