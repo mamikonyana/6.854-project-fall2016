@@ -229,10 +229,10 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
     int lower = -1;
 
     while (front[0] < envelopes[0].size() && front[1] < envelopes[1].size()) {
-        printf("\n==============\n");
+        // printf("\n==============\n");
         int s = envelopes[0][front[0]].location.x < envelopes[1][front[1]].location.x ? 0 : 1;
 
-        printf("front = %d %d, s = %d\n", front[0], front[1], s);
+        // printf("front = %d %d, s = %d\n", front[0], front[1], s);
         if (front[s] == 0 && front[1 - s] == 0) {
             front[s]++;
             continue;
@@ -243,7 +243,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
         
         Point2D other = {curr.x, ac.y - dir * sqrt(1 - (curr.x - ac.x) * (curr.x - ac.x))};
 
-        printf("curr = (%.2f %.2f); other = (%.2f, %.2f)\n", curr.x, curr.y, other.x, other.y);
+        // printf("curr = (%.2f %.2f); other = (%.2f, %.2f)\n", curr.x, curr.y, other.x, other.y);
         // TODO x1 == x2
 
         Vertex new_vertex;
@@ -257,7 +257,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
                 new_lower = s;
             }
         } else {
-            if (curr.y < other.y) {
+            if (dir * (curr.y - other.y) > 0) {
                 new_vertex = Vertex{curr, envelopes[s][front[s]].arch_center, envelopes[s][front[s]].circle_index};
                 new_lower = s;
             } else {
@@ -266,7 +266,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
             }
         }
 
-        printf("lower %d, new_lower = %d\n", lower, new_lower);
+        // printf("lower %d, new_lower = %d\n", lower, new_lower);
 
         if (lower != -1 && new_lower != lower) {
             std::pair< Point2D, bool > new_intersection;
@@ -288,7 +288,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
                                                   envelopes[1 - s][front[1 - s] - 1].location);
             }
             assert(new_intersection.second);
-            printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
+            // printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
 
 //           auto& prev = *res.rbegin();
 //           if (prev.circle_index == envelopes[new_lower][front[new_lower] - 1].circle_index) {

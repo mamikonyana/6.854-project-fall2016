@@ -204,9 +204,9 @@ void test_intersect_envelopes_basic() {
 
     auto res = intersect_envelopes(upper1, upper2, -1);
 
-    for (auto& v : res) {
-        printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
-    }
+    // for (auto& v : res) {
+    //     printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
+    // }
 
     assert(res.size() == 3);
     assert(res[0].location == (Point2D{1, 0}));
@@ -215,9 +215,9 @@ void test_intersect_envelopes_basic() {
 
     res = intersect_envelopes(upper1, upper2, 1);
 
-    for (auto& v : res) {
-        printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
-    }
+    // for (auto& v : res) {
+    //     printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
+    // }
 
     assert(res.size() == 3);
     assert(res[0].location == (Point2D{1, 0}));
