@@ -13,8 +13,15 @@ clean:
 	rm -f ${BUILD_DIR}/main
 .PHONY: clean
 
-N = 2000
+DATA=data/10k_random_walk_2d.csv
 
+run: ${BUILD_DIR}/main ${DATA}
+	@echo Build Successful! Running...
+	@echo
+	./${BUILD_DIR}/main ${DATA}
+.PHONY: rebuildrun
+
+N = 2000 # If i put this as a target specific variable, variable substitution fails...
 rebuildrun: clean ${BUILD_DIR}/main data/gaussian_$(N).csv
 	@echo Build Successful! Running...
 	@echo
@@ -23,6 +30,9 @@ rebuildrun: clean ${BUILD_DIR}/main data/gaussian_$(N).csv
 
 data/gaussian_%.csv:
 	python datagen/moving_gaussian.py --num-points $* -o data/gaussian_$*.csv --speed 1 --covariance 0.2 0 0 1
+
+data/10k_random_walk_2d.csv:
+	python datagen/random_walk_2d.py -o data/10k_random_walk_2d.csv --step-size 0.05
 
 build/main:
 	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp src/helpers.cpp src/naive.cpp src/bce.cpp src/polyarc.cpp

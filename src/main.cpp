@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 
     clock_t start = clock();
     printf("start = %ld\n", start);
-    std::vector<int> naive_a = naive_monotonicity_2d(data);
+    std::vector<int> naive_a = naive_diameter(data);
     clock_t end = clock();
     for (int i = 0; i < 10; i++) {
         printf("%d\n", naive_a[i]);
