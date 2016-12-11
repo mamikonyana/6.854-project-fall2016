@@ -210,7 +210,7 @@ void test_intersect_envelopes_basic() {
 
     assert(res.size() == 3);
     assert(res[0].location == (Point2D{1, 0}));
-    assert(res[1].location == (Point2D{1.5, sqrt(3) / 2}));
+    assert(res[1].location == (Point2D{1.5, sqrt(3.0) / 2}));
     assert(res[2].location == (Point2D{2, 0}));
 
     res = intersect_envelopes(upper1, upper2, 1);
@@ -221,14 +221,32 @@ void test_intersect_envelopes_basic() {
 
     assert(res.size() == 3);
     assert(res[0].location == (Point2D{1, 0}));
-    assert(res[1].location == (Point2D{1.5, -sqrt(3) / 2}));
+    assert(res[1].location == (Point2D{1.5, -sqrt(3.0) / 2}));
     assert(res[2].location == (Point2D{2, 0}));
 
     printf("PASS: test_intersect_envelopes_basic\n\n");
 }
 
+void test_intersect_envelopes_below() {
+    printf("START: test_intersect_envelopes_below\n");
+    Vertex v1 = {Point2D{1, 2}, Point2D{2, 2}, 0};
+    Vertex v2 = {Point2D{3, 2}, Point2D{2, 2}, 0};
+
+    Vertex v3 = {Point2D{1.5, 1}, Point2D{2.5, 1}, 0};
+    Vertex v4 = {Point2D{3.5, 1}, Point2D{2.5, 1}, 0};
+
+    auto upper1 = std::vector< Vertex >{v1, v2};
+    auto upper2 = std::vector< Vertex >{v3, v4};
+
+    auto res = intersect_envelopes(upper1, upper2, -1);
+
+    assert(res.size() == 2);
+    assert(res[0].location == (Point2D{1.5, 1}));
+    assert(res[1].location == (Point2D{3, 1 + sqrt(3.0) / 2}));
+    printf("PASS: test_intersect_envelopes_below\n\n");
+}
+
 int main() {
-    test_intersect_envelopes_basic();
     // test_contains_manual();
     // test_contains_triangular();
     // test_direction();
@@ -236,6 +254,8 @@ int main() {
     // test_intersect_circles_3_normal();
     // test_intersect_circles_3_normal_non_pairwise();
     // test_intersect_circles_3_degenerate();
+    test_intersect_envelopes_basic();
+    test_intersect_envelopes_below();
     return 0;
 }
 
