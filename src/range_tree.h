@@ -13,11 +13,18 @@ public:
 
     RangeTree * locate_tree(int index);
 
-    RangeTree * getParent();
+    RangeTree * get_parent();
 
-    RangeTree * leftChild();
+    RangeTree * left_child();
 
-    RangeTree * rightChild();
+    RangeTree * right_child();
+
+    bool is_left_child();
+    bool is_root();
+
+    bool is_point_outside_intersection(std::vector<double> &vector);
+
+    bool is_leaf();
 
 private:
     RangeTree(std::vector<Point> &points, int first, int last, RangeTree *parent);
