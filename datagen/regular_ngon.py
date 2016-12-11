@@ -12,13 +12,14 @@ def parse_args(*argument_array):
   parser = argparse.ArgumentParser()
   parser.add_argument('-n', '--n', type=int, default=10)
   parser.add_argument('-o', '--outfile')
+  parser.add_argument('--radius', type=float, default=1.)
   args = parser.parse_args(*argument_array)
   return args
 
 
 def main(args):
-  points = [(np.cos(2 * np.pi * i / args.n),
-             np.sin(2 * np.pi * i / args.n))
+  points = [(args.radius * np.cos(2 * np.pi * i / args.n),
+             args.radius * np.sin(2 * np.pi * i / args.n))
             for i in range(args.n)]
   outfilename = args.outfile or '{}-gon.csv'.format(args.n)
   print('Outputing points to {}..'.format(outfilename))
