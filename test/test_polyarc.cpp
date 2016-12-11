@@ -134,16 +134,23 @@ void test_intersect_circles_3_degenerate() {
     printf("PASS: intersect_circles_3_degenerate\n\n");
 }
 
+
 void test_contains() {
     std::vector<Point> data = load_csv_data("data/triangle-radius0.55.csv");
 
     PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
+
     PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
     PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
-    PolyArc pa12 = pa1.intersect(pa2);
 
+    assert(pa1.contains(Point2D{0., 0.}));
+    assert(pa1.contains(Point2D{0., 2}) == false);
+    assert(pa1.contains(Point2D{0., -2}) == false);
+
+    PolyArc pa12 = pa1.intersect(pa2);
     assert(pa12.contains(Point2D{0., 0.}));
     assert(pa12.contains(Point2D{1., 2.}) == false);
+
     PolyArc pa123 = pa12.intersect(pa3);
     assert(pa123.contains(Point2D{0.12, 0.12}));
     assert(pa123.contains(Point2D{-0.12, 0.2}));

@@ -8,8 +8,12 @@ PolyArc::PolyArc() {
 }
 
 PolyArc::PolyArc(Point2D center) {
-    mIsCircle = true;
-    singleCircle = center;
+    Vertex left = {Point2D{center.x - 1, center.y}, center, -1};
+    Vertex right = {Point2D{center.x + 1, center.y}, center, -1};
+    upper.push_back(left);
+    upper.push_back(right);
+    lower.push_back(left);
+    lower.push_back(right);
 }
 
 PolyArc::PolyArc(Vertex v) {
