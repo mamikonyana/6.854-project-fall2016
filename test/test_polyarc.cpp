@@ -83,12 +83,12 @@ void test_intersect_circles_3_normal() {
 void test_intersect_circles_3_normal_non_pairwise() {
     printf("START: intersect_circles_3_normal_non_pairwise\n");
 
-    std::vector< Point > data = load_csv_data("data/3-circles-normal-non-pairwise.csv");
+    std::vector<Point> data = load_csv_data("data/3-circles-normal-non-pairwise.csv");
     PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
     PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
     PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
 
-    PolyArc pa13  = pa1.intersect(pa3);
+    PolyArc pa13 = pa1.intersect(pa3);
 
     PolyArc pa123 = pa2.intersect(pa13);
 
@@ -107,12 +107,12 @@ void test_intersect_circles_3_normal_non_pairwise() {
 void test_intersect_circles_3_degenerate() {
     printf("START: intersect_circles_3_degenerate\n");
 
-    std::vector< Point > data = load_csv_data("data/3-circles-degenerate.csv");
+    std::vector<Point> data = load_csv_data("data/3-circles-degenerate.csv");
     PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
     PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
     PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
 
-    PolyArc pa12  = pa1.intersect(pa2);
+    PolyArc pa12 = pa1.intersect(pa2);
 
     PolyArc pa123 = pa12.intersect(pa3);
 
@@ -134,8 +134,41 @@ void test_intersect_circles_3_degenerate() {
     printf("PASS: intersect_circles_3_degenerate\n\n");
 }
 
+/**
+ * 10 circles on x axis, 0.5 apart from each other, starting at origin
+ */
+void test_contains_manual() {
 
-void test_contains() {
+    double center_delta = 0.5;
+    double offset = center_delta / 2;
+    double h = std::sqrt(1 - offset * offset);
+    std::vector<Vertex> upper(0);
+    std::vector<Vertex> lower(0);
+    upper.push_back(Vertex{Point2D{-1, 0}, Point2D{0., 0.}, 0});
+    lower.push_back(Vertex{Point2D{-1, 0}, Point2D{0., 0.}, 0});
+    for (int i = 1; i < 10; i++) {
+        auto center = Point2D{i * center_delta, 0};
+        double x = -offset + i * center_delta;
+        upper.push_back(Vertex{Point2D{x, h}, center, i});
+        lower.push_back(Vertex{Point2D{x, -h}, center, i});
+    }
+    double center_x = 9. * center_delta;
+    upper.push_back(Vertex{Point2D{1. + center_x, 0}, Point2D{center_x, 0.}, 10});
+    lower.push_back(Vertex{Point2D{1. + center_x, 0}, Point2D{center_x, 0.}, 10});
+
+    PolyArc polyArc = PolyArc(upper, lower);
+
+    assert(polyArc.contains(Point2D{0., 0.}));
+    assert(polyArc.contains(Point2D{3.3, 0.}));
+    assert(polyArc.contains(Point2D{3.3, 1.}) == false);
+    assert(polyArc.contains(Point2D{2.25, -h + 0.01}));
+    assert(polyArc.contains(Point2D{2.25, -h - 0.01}) == false);
+    assert(polyArc.contains(Point2D{4.4, 0.}));
+    assert(polyArc.contains(Point2D{5.6, 0.}) == false);
+    printf("PASS: test_contains_manual\n\n");
+}
+
+void test_contains_triangular() {
     std::vector<Point> data = load_csv_data("data/triangle-radius0.55.csv");
 
     PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
@@ -156,11 +189,12 @@ void test_contains() {
     // assert(pa123.contains(Point2D{-0.12, 0.2}));
     // assert(pa12.contains(Point2D{1., 2.}) == false);
 
-    printf("PASS: test_contains\n\n");
+    printf("PASS: test_contains_triangular\n\n");
 }
 
 int main() {
-    test_contains();
+    test_contains_manual();
+    test_contains_triangular();
     test_direction();
     test_intersect_circles();
     test_intersect_circles_3_normal();

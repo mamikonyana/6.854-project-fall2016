@@ -6,7 +6,7 @@
 struct Point2D {
     double x, y;
 
-    bool operator == (Point2D other) {
+    bool operator==(Point2D other) {
         return fequal(x, other.x) && fequal(y, other.y);
     }
 };
@@ -19,8 +19,8 @@ struct Vertex {
 
 class PolyArc {
 private:
-    std::vector< Vertex > upper;
-    std::vector< Vertex > lower;
+    std::vector<Vertex> upper;
+    std::vector<Vertex> lower;
 
     bool mIsCircle;
     Point2D singleCircle;
@@ -28,13 +28,21 @@ private:
     PolyArc(Vertex vertex);
 
     PolyArc(Vertex v1, Vertex v2);
+
     int find_neighbours(std::vector<Vertex> vector, double x);
 
     void reorder();
+
 public:
     PolyArc();
 
     PolyArc(Point2D center);
+
+    // Used for testing.
+    PolyArc(std::vector<Vertex> upper, std::vector<Vertex> lower) {
+        this->upper = upper;
+        this->lower = lower;
+    }
 
     bool isCircle();
 
@@ -57,9 +65,9 @@ public:
 // return -1(1), if first to second is (counter)clockwise wrt origin. Otherwise, 0
 int direction(Point2D origin, Point2D first, Point2D second);
 
-std::vector< Point2D > intersect_circles(Point2D c1, Point2D c2);
+std::vector<Point2D> intersect_circles(Point2D c1, Point2D c2);
 
-std::vector< Point2D > intersect_circle_arc(Point2D center, Point2D arc_center, Point2D a, Point2D b);
+std::vector<Point2D> intersect_circle_arc(Point2D center, Point2D arc_center, Point2D a, Point2D b);
 
 bool circle_contains(Point2D center, Point2D pt);
 
