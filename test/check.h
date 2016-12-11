@@ -1,6 +1,17 @@
 #include <printf.h>
 
 #include <vector>
+#include <assert.h>
+
+void assert_equal(double d1, double d2, double prec) {
+    if (std::abs(d1 - d2) < prec) {
+        return;
+    } else {
+        printf("Checking %f < %f (with prec %f), which is wrong", d1, d2, prec);
+        assert(std::abs(d1 - d2) < prec);
+    }
+}
+
 
 void check_vectors(std::vector<int> expected, std::vector<int> received, std::string name) {
     if (expected == received) {

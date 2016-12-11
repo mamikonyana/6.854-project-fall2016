@@ -43,6 +43,8 @@ public:
     int nArcs();
 
     PolyArc intersect(PolyArc other);
+
+    std::vector<Vertex> getVertices();
 };
 
 //////// helpers //////

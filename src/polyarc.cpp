@@ -178,6 +178,10 @@ void PolyArc::reorder() {
     std::rotate(vertices.begin(), vertices.begin() + leftmost, vertices.end());
 }
 
+std::vector<Vertex> PolyArc::getVertices() {
+    return vertices;
+}
+
 ////////////// helpers ////////////////
 
 int direction(Point2D origin, Point2D first, Point2D second) {

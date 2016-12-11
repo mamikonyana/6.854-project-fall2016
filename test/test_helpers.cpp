@@ -8,16 +8,6 @@ void assert_equal(double d1, double d2, double prec) {
     assert(std::abs(d1 - d2) < prec);
 }
 
-void assert_equal(double d1, double d2, double prec, std::string message) {
-    if (std::abs(d1 - d2) < prec) {
-        return;
-    } else {
-        printf("Checking %f < %f (with prec %f), which is wrong", d1, d2, prec);
-        printf("%s", message.c_str());
-        assert(std::abs(d1 - d2) < prec);
-    }
-}
-
 void test_relative_angle() {
     Point origin = {0, 0};
     Point p2 = {1, 1};
