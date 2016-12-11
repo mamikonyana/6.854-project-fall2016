@@ -116,8 +116,21 @@ PolyArc PolyArc::intersect(PolyArc other) {
         Point2D b = vertices[1].location;
         Point2D c2 = vertices[1].arch_center;
 
+        // printf("arc1: %.2f %.2f ;  %.2f %.2f;  %.2f %.2f\n", c1.x, c1.y, a.x, a.y, b.x, b.y);
+        // printf("arc2: %.2f %.2f ;  %.2f %.2f;  %.2f %.2f\n", c2.x, c2.y, b.x, b.y, a.x, a.y);
+
         auto intersections1 = intersect_circle_arc(other.singleCircle, c1, a, b);
         auto intersections2 = intersect_circle_arc(other.singleCircle, c2, b, a);
+
+        // printf("intersections1\n");
+        // for (auto x : intersections1) {
+        //     printf("%.2f %.2f\n", x.x, x.y);
+        // }
+
+        // printf("intersections2\n");
+        // for (auto x : intersections2) {
+        //     printf("%.2f %.2f\n", x.x, x.y);
+        // }
 
         assert(intersections1.size() + intersections2.size() <= 2);
 
@@ -239,7 +252,7 @@ bool circle_contains(Point2D center, Point2D pt) {
 }
 
 bool on_arc(Point2D center, Point2D a, Point2D b, Point2D pt) {
-    return direction(center, a, pt) == direction(center, pt, b);
+    return direction(center, a, pt) < 0 && direction(center, pt, b) < 0;
 }
 
 std::vector< Point2D > intersect_circle_arc(Point2D center, Point2D arc_center, Point2D a, Point2D b) {

@@ -46,10 +46,12 @@ void test_intersect_circles() {
 
     assert(intersect_circles(c1, c4).size() == 0);
 
-    printf("PASS: test_intersect_circles\n");
+    printf("PASS: test_intersect_circles\n\n");
 }
 
-void test_intersect_circles_3() {
+void test_intersect_circles_3_normal() {
+    printf("START: intersect_circles_3_normal\n");
+
     std::vector<Point> data = load_csv_data("data/triangle-radius0.55.csv");
     PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
     PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
@@ -67,20 +69,41 @@ void test_intersect_circles_3() {
     PolyArc pa123 = pa12.intersect(pa3);
     vertices = pa123.getVertices();
     assert(vertices.size() == 3);
-    // assert_equal(vertices[0].location.x, -0.302138, 1e-5);
-    // assert_equal(vertices[0].location.y, -0.523318, 1e-5);
-    // assert_equal(vertices[1].location.x, 0.577138, 1e-5);
-    // assert_equal(vertices[1].location.y, 0.999632, 1e-5);
-    // assert_equal(vertices[2].location.x, 0.577138, 1e-5);
-    // assert_equal(vertices[2].location.y, 0.999632, 1e-5);
-    printf("vertices %f %f %f %f %f %f", vertices[0].location.x, vertices[0].location.y, vertices[1].location.x, vertices[1].location.y, vertices[2].location.x, vertices[2].location.y);
 
+    assert_equal(vertices[0].location.x, -0.302138, 1e-5);
+    assert_equal(vertices[0].location.y, -0.523318, 1e-5);
+    assert_equal(vertices[1].location.x, -0.302138, 1e-5);
+    assert_equal(vertices[1].location.y, 0.523318, 1e-5);
+    assert_equal(vertices[2].location.x, 0.604275, 1e-5);
+    assert_equal(vertices[2].location.y, 0.000000, 1e-5);
+    // printf("vertices %f %f %f %f %f %f\n", vertices[0].location.x, vertices[0].location.y, vertices[1].location.x, vertices[1].location.y, vertices[2].location.x, vertices[2].location.y);
+    printf("PASS: intersect_circles_3_normal\n\n");
+}
+
+void test_intersect_circles_3_normal_non_pairwise() {
+    printf("START: intersect_circles_3_normal_non_pairwise\n");
+
+    std::vector< Point > data = load_csv_data("data/3-circles-normal-non-pairwise.csv");
+    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
+    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
+    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
+
+    PolyArc pa13  = pa1.intersect(pa3);
+    PolyArc pa123 = pa2.intersect(pa13);
+
+    auto vertices = pa123.getVertices();
+    assert(vertices.size() == 3);
+
+    printf("vertices %f %f %f %f %f %f\n", vertices[0].location.x, vertices[0].location.y, vertices[1].location.x, vertices[1].location.y, vertices[2].location.x, vertices[2].location.y);
+
+    printf("PASS: intersect_circles_3_normal_non_pairwise\n\n");
 }
 
 int main() {
     test_direction();
     test_intersect_circles();
-    test_intersect_circles_3();
+    test_intersect_circles_3_normal();
+    test_intersect_circles_3_normal_non_pairwise();
     return 0;
 }
 
