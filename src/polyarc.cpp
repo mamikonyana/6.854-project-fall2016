@@ -134,6 +134,14 @@ PolyArc PolyArc::intersect(PolyArc other) {
 
         assert(intersections1.size() + intersections2.size() <= 2);
 
+        if (intersections1.size() == 0 && intersections2.size() == 0) {
+            if (circle_contains(other.singleCircle, a)) {
+                assert(circle_contains(other.singleCircle, b));
+                return *this;
+            }
+            return PolyArc();
+        }
+
         if (intersections2.size() > intersections1.size()) { // cases (1, 0); (2, 0)
             std::swap(intersections1, intersections2);
             std::swap(c1, c2);

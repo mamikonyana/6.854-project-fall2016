@@ -89,12 +89,17 @@ void test_intersect_circles_3_normal_non_pairwise() {
     PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
 
     PolyArc pa13  = pa1.intersect(pa3);
+
     PolyArc pa123 = pa2.intersect(pa13);
 
     auto vertices = pa123.getVertices();
-    assert(vertices.size() == 3);
+    assert(vertices.size() == 2);
 
-    printf("vertices %f %f %f %f %f %f\n", vertices[0].location.x, vertices[0].location.y, vertices[1].location.x, vertices[1].location.y, vertices[2].location.x, vertices[2].location.y);
+    // printf("vertices %f %f %f %f\n", vertices[0].location.x, vertices[0].location.y, vertices[1].location.x, vertices[1].location.y);
+    assert_equal(vertices[0].location.x, 1.5, 1e-5);
+    assert_equal(vertices[0].location.y, 0.866025, 1e-5);
+    assert_equal(vertices[1].location.x, 1.5, 1e-5);
+    assert_equal(vertices[1].location.y, -0.866025, 1e-5);
 
     printf("PASS: intersect_circles_3_normal_non_pairwise\n\n");
 }
