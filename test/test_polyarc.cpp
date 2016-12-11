@@ -192,14 +192,50 @@ void test_contains_triangular() {
     printf("PASS: test_contains_triangular\n\n");
 }
 
+void test_intersect_envelopes_basic() {
+    printf("START: test_intersect_envelopes_basic\n");
+    Vertex v1 = {Point2D{0, 0}, Point2D{1, 0}, 0};
+    Vertex v2 = {Point2D{1, 0}, Point2D{2, 0}, 0};
+    Vertex v3 = {Point2D{2, 0}, Point2D{1, 0}, 0};
+    Vertex v4 = {Point2D{3, 0}, Point2D{2, 0}, 0};
+
+    auto upper1 = std::vector< Vertex >{v1, v3};
+    auto upper2 = std::vector< Vertex >{v2, v4};
+
+    auto res = intersect_envelopes(upper1, upper2, -1);
+
+    for (auto& v : res) {
+        printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
+    }
+
+    assert(res.size() == 3);
+    assert(res[0].location == (Point2D{1, 0}));
+    assert(res[1].location == (Point2D{1.5, sqrt(3) / 2}));
+    assert(res[2].location == (Point2D{2, 0}));
+
+    res = intersect_envelopes(upper1, upper2, 1);
+
+    for (auto& v : res) {
+        printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
+    }
+
+    assert(res.size() == 3);
+    assert(res[0].location == (Point2D{1, 0}));
+    assert(res[1].location == (Point2D{1.5, -sqrt(3) / 2}));
+    assert(res[2].location == (Point2D{2, 0}));
+
+    printf("PASS: test_intersect_envelopes_basic\n\n");
+}
+
 int main() {
-    test_contains_manual();
-    test_contains_triangular();
-    test_direction();
-    test_intersect_circles();
-    test_intersect_circles_3_normal();
-    test_intersect_circles_3_normal_non_pairwise();
-    test_intersect_circles_3_degenerate();
+    test_intersect_envelopes_basic();
+    // test_contains_manual();
+    // test_contains_triangular();
+    // test_direction();
+    // test_intersect_circles();
+    // test_intersect_circles_3_normal();
+    // test_intersect_circles_3_normal_non_pairwise();
+    // test_intersect_circles_3_degenerate();
     return 0;
 }
 
