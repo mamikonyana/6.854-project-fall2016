@@ -34,8 +34,17 @@ plots/diameter_random_walk_0.02.png: bench/naive_diameter_random_walk-0.02.txt
 	python vis/answer_triangle.py bench/naive_diameter_random_walk-0.02.txt --png plots/diameter_random_walk_0.02.png
 	open plots/diameter_random_walk_0.02.png
 
-debug: bench/bce_monotonicity_20_random_walk-0.02.txt bench/naive_monotonicity_20_random_walk-0.02.txt
+debug_diameter: bench/naive_diameter_20_random_walk-0.3.txt bench/chan_prat_diameter_20_random_walk-0.3.txt
 	python vis/answer_triangle.py $^
+
+debug_monotonicity: bench/bce_monotonicity_20_random_walk-0.02.txt bench/naive_monotonicity_20_random_walk-0.02.txt
+	python vis/answer_triangle.py $^
+
+bench/naive_diameter_20_random_walk-0.3.txt: bench/naive_diameter.exe data/20_random_walk_2d-0.3.csv 
+	./$^ $@
+
+bench/chan_prat_diameter_20_random_walk-0.3.txt: bench/chan_prat_diameter.exe data/20_random_walk_2d-0.3.csv
+	./$^ $@
 
 bench/bce_monotonicity_20_random_walk-0.02.txt: bench/bce_monotonicity.exe data/20_random_walk_2d-0.02.csv
 	./$^ $@
@@ -69,6 +78,9 @@ data/%k_random_walk_2d-0.02.csv:
 
 data/%_random_walk_2d-0.02.csv:
 	python datagen/random_walk_2d.py -o $@ --step-size 0.02 --num-points $*
+
+data/%_random_walk_2d-0.3.csv:
+	python datagen/random_walk_2d.py -o $@ --step-size 0.3 --num-points $*
 
 %.exe:
 	${CC} ${CCFLAGS} -o $@ $*.cpp ${cpp_files}
