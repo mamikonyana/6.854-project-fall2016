@@ -117,6 +117,9 @@ std::vector<Vertex> PolyArc::getVertices() {
 
 
 bool PolyArc::contains(Point2D query_point) {
+    if (this->isEmpty()) {
+        return false;
+    }
     int upper_left = find_neighbours(upper, query_point.x);
     if (upper_left == -1) {
         return false;
