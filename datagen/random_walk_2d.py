@@ -26,7 +26,7 @@ def main(args):
   for i in range(1, args.num_points):
     theta = 2 * np.pi * random.random()
     loc = (loc[0] + args.step_size * np.cos(theta),
-           loc[1] + args.step_size * np.cos(theta))
+           loc[1] + args.step_size * np.sin(theta))
     points.append(loc)
 
   outfilename = args.outfile
