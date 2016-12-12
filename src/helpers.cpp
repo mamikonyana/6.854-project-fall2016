@@ -114,15 +114,15 @@ std::pair<double, double> range_intersect(std::pair<double, double> r1, std::pai
     // normalize
     r1.first -= delta;
     r1.second -= delta;
-    if (r1.second < 0) {
+    if (r1.second < -EPS) {
         r1.second += 2 * PI;
     }
 
     r2.first = standard_angle(r2.first - delta);
     r2.second = standard_angle(r2.second - delta);
-    if (r2.first > PI) {
+    if (r2.first > PI + EPS) {
         r2.first -= 2 * PI;
-        if (r2.second > PI) {
+        if (r2.second > PI + EPS) {
             r2.second -= 2 * PI;
         }
     }
@@ -133,7 +133,7 @@ std::pair<double, double> range_intersect(std::pair<double, double> r1, std::pai
     double range_end = min(r1.second, r2.second);
     // printf("range start/end: %.3f, %.3f, \n", range_start, range_end);
 
-    if (range_start > range_end) {
+    if (range_start > range_end + EPS) {
         return std::make_pair(-1., -1.);
     } else {
         return std::make_pair(standard_angle(range_start + delta),

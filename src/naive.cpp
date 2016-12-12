@@ -32,10 +32,10 @@ std::vector<int> naive_monotonicity_2d(std::vector<Point> &points) {
 
             std::pair<double, double> new_range = positive_directions(points[j], points[j + 1]);
 
-            printf("================= before (%d, %d): %.5f, %.5f\n", i, j, range.first * 180 / PI,
-                   range.second * 180 / PI);
-            printf("=================  new   (%d, %d): %.5f, %.5f\n", i, j, new_range.first * 180 / PI,
-                   new_range.second * 180 / PI);
+            // printf("================= before (%d, %d): %.5f, %.5f\n", i, j, range.first * 180 / PI,
+            //        range.second * 180 / PI);
+            // printf("=================  new   (%d, %d): %.5f, %.5f\n", i, j, new_range.first * 180 / PI,
+            //        new_range.second * 180 / PI);
             if (i == j) {
                 range = new_range;
             } else {

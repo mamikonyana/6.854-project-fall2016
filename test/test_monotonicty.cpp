@@ -71,18 +71,15 @@ void test_monotonicity_bce_vs_naive(std::string file) {
 }
 
 int main() {
-    // test_monotonicity_simple_triangle();
+    test_monotonicity_simple_triangle();
     test_monotonicity_1d_movement();
-    printf("\n");
-    printf("DIVIDE\n");
-    printf("\n");
     test_monotonicity_1d_tilted_movement();
-    // test_monotonicity_11gon();
-    // test_monotonicity_bce_vs_naive("data/20_random_walk_2d-0.3.csv");
-    // test_monotonicity_bce_vs_naive("data/random_walkish.csv");
-    // test_monotonicity_bce_vs_naive("data/gaussian_20.csv");
-    // test_monotonicity_bce_vs_naive("data/gaussian_200.csv");
-    // test_monotonicity_bce_vs_naive("data/gaussian_2000.csv");
+    test_monotonicity_11gon();
+    test_monotonicity_bce_vs_naive("data/20_random_walk_2d-0.3.csv");
+    test_monotonicity_bce_vs_naive("data/random_walkish.csv");
+    test_monotonicity_bce_vs_naive("data/gaussian_20.csv");
+    test_monotonicity_bce_vs_naive("data/gaussian_200.csv");
+    test_monotonicity_bce_vs_naive("data/gaussian_2000.csv");
     return 0;
 }
 

@@ -13,19 +13,19 @@ std::vector<int> bce_monotonicity_2d(std::vector<Point> &points) {
         back_ranges[curr] = std::make_pair(-1, -1);
         for (int i = curr - 1; i >= prev; --i) {
             auto new_range = positive_directions(points[i + 1], points[i]);
-            // printf("new range %d: %.2f %.2f\n", i, new_range.first, new_range.second);
+            // printf("new range %d: %.2f %.2f\n", i, new_range.first * 180 / PI, new_range.second * 180 / PI);
             if (i == curr - 1) {
                 back_ranges[i] = new_range;
             } else {
                 back_ranges[i] = range_intersect(back_ranges[i + 1], new_range);
             }
-            // printf("back ranges %d: %.2f %.2f\n", i, back_ranges[i].first, back_ranges[i].second);
+            // printf("back ranges %d: %.2f %.2f\n", i, back_ranges[i].first * 180 / PI, back_ranges[i].second * 180 / PI);
         }
 
         // printf("%d %d\n", prev, curr);
-        for (int i = prev; i < curr; i++) {
-            // printf("%.2f %.2f\n", back_ranges[i].first, back_ranges[i].second);
-        }
+        // for (int i = prev; i < curr; i++) {
+        //      printf("%.2f %.2f\n", back_ranges[i].first, back_ranges[i].second);
+        // }
 
         int next;
         std::pair<double, double> range;
@@ -37,8 +37,8 @@ std::vector<int> bce_monotonicity_2d(std::vector<Point> &points) {
             } else {
                 range = range_intersect(range, new_range);
             }
-            printf("BCE=== start %d, after %d: %.2f %.2f\n", curr, next, range.first * 180 / PI,
-                   range.second * 180 / PI);
+            // printf("BCE=== start %d, after %d: %.2f %.2f\n", curr, next, range.first * 180 / PI,
+            //        range.second * 180 / PI);
 
             while (prev < curr) {
                 auto rev_range = back_ranges[prev];
@@ -47,13 +47,15 @@ std::vector<int> bce_monotonicity_2d(std::vector<Point> &points) {
                 rev_range.first = standard_angle(rev_range.first);
                 rev_range.second = standard_angle(rev_range.second);
 
-                // printf("prev: %d; curr: %d; next: %d; rev_range: %.2f, %.2f; range: %.2f, %.2f; intersect: %.2f, %.2f\n", prev, curr, next, rev_range.first, rev_range.second, range.first, range.second, range_intersect(rev_range, range).first, range_intersect(rev_range, range).second);
+                // printf("prev: %d; curr: %d; next: %d; rev_range: %.15lf, %.15lf; range: %.15lf, %.15lf; intersect: %.15lf, %.15lf\n",
+                //         prev, curr, next, rev_range.first * 180 / PI, rev_range.second * 180 / PI, range.first * 180 / PI, range.second * 180 / PI,
+                //         range_intersect(rev_range, range).first * 180 / PI, range_intersect(rev_range, range).second * 180 / PI);
 
                 if (range_intersect(rev_range, range).first >= 0) {
                     break;
                 }
                 answer[prev] = next;
-                printf("answer[%d] = %d\n", prev, answer[prev]);
+                // printf("answer[%d] = %d\n", prev, answer[prev]);
                 prev += 1;
             }
 
@@ -66,7 +68,7 @@ std::vector<int> bce_monotonicity_2d(std::vector<Point> &points) {
     }
     while (prev < n) {
         answer[prev] = n - 1;
-        printf("answer[%d] = %d\n", prev, answer[prev]);
+        // printf("answer[%d] = %d\n", prev, answer[prev]);
         prev += 1;
     }
 
