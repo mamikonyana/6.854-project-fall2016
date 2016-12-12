@@ -18,6 +18,12 @@ clean:
 	rm bench/*.exe bench/*.txt bench/*.csv
 .PHONY: clean
 
+## Report png's
+plots/diameter_random_walk.png: bench/chan_prat_diameter_random_walk-0.02.txt
+	python vis/pretty_answer_triangle.py $^ --png $@ --label "Chan, Prat" --title "Diameter, Random Walk"
+
+## Debug png's
+
 plots/compare_monotonicity.png: bench/compare_monotonicity-moving.csv
 	cat $^
 
@@ -32,10 +38,14 @@ plots/monotonicity_10k_gon-0.55.png: bench/bce_monotonicity_10k_gon-0.55.txt
 	python vis/answer_triangle.py bench/bce_monotonicity_10k_gon-0.55.txt --png plots/monotonicity_10k_gon-0.55.png
 	open plots/monotonicity_10k_gon-0.55.png
 
-plots/diameter_random_walk_0.02.png: bench/naive_diameter_random_walk-0.02.txt
+plots/diameter_random_walk_0.02.png: bench/naive_diameter_random_walk-0.02.txt bench/chan_prat_diameter_random_walk-0.02.txt
 	mkdir -p plots
-	python vis/answer_triangle.py bench/naive_diameter_random_walk-0.02.txt --png plots/diameter_random_walk_0.02.png
-	open plots/diameter_random_walk_0.02.png
+	python vis/answer_triangle.py $^ --png plots/diameter_random_walk_0.02.png
+	open $@
+
+plots/diameter_10k_gon-0.55.png: bench/chan_prat_diameter_10k_gon-0.55.txt bench/naive_diameter_10k_gon-0.55.txt
+	python vis/answer_triangle.py $^ --png $@
+	open $@
 
 clear_debug_diameter:
 	@rm bench/chan_prat_diameter_7_random_walk-0.3.txt data/7_random_walk_2d-0.3.csv
@@ -83,6 +93,15 @@ bench/bce_monotonicity_10k_gon-0.55.txt: bench/bce_monotonicity.exe data/10k_gon
 	./$^ $@
 
 bench/naive_diameter_random_walk-0.02.txt: bench/naive_diameter.exe data/10k_random_walk_2d-0.02.csv
+	./$^ $@
+
+bench/chan_prat_diameter_random_walk-0.02.txt: bench/chan_prat_diameter.exe data/10k_random_walk_2d-0.02.csv
+	./$^ $@
+
+bench/chan_prat_diameter_10k_gon-0.55.txt: bench/chan_prat_diameter.exe data/10k_gon-0.55.csv
+	./$^ $@
+
+bench/naive_diameter_10k_gon-0.55.txt: bench/naive_diameter.exe data/10k_gon-0.55.csv
 	./$^ $@
 
 data/%k_gon-0.55.csv:
