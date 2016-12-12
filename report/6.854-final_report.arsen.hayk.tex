@@ -15,7 +15,13 @@
 
 \section{Introduction}
 
-With increasing number of sensors and location-tracking devices, there are massive datasets describing movements of people, animals, robots, etc. Most of the location data points are associated with a timestamp as they describe a movement of an entity.
+With increasing number of sensors and location-tracking devices, there are massive datasets describing movements of people, animals, robots, etc. Since the datasets mostly describe trajectories of movement, often each location point is associated with a timestamp. As a result, in the process of analysing such datasets, efficient algorithms for time range queries are required.
+
+This paper discusses problems of the following nature: given a sequence of points $S = s_1, \dots, s_n$, and a property $P$ defined on a sequence of points. For any given range $[i, j]$, we want to answer whether $P$ is true for $s_i, \dots, s_j$. Additionally, we restrict $P$ to be a hereditary property i.e. if $P$ holds for sequence set $A$, then $P$ also holds for any subsequence of $A$. The ability to answer these queries has practical applications and, in particular, it is the case for the two problems discussed in this paper.
+
+Suppose we have a data structure that for any index $i$ retrieves the largest integer $j^*(i)$ such that $P$ is true for the sequence $S[i, j^*(i)]$. Then, it is trivial to check whether $P$ holds for $S[i, j]$ as one only needs to compare $j$ and $j^*(i)$. Therefore, the time range query problem reduces to building such data structure. Each of the two papers reviewed here present a general framework that can be used to build such data structures for a variety of problems.
+
+\cite{bokal_et_al:LIPIcs:2015:5113,chan_et_al:LIPIcs:2016:5920} use their frameworks to efficiently solve the range query problem for different properties $P$. We have implemented one algorithm from each paper. The first one is the \textit{monotonicity} property. A sequence of points $S$ in two-dimensional space is monotone if there is a line $l$, for which if points of $S$ are projected on $l$, their order is maintained. The algorithm described in \cite{bokal_et_al:LIPIcs:2015:5113} is linear. The second one is the \textit{clustering} property. We will call a set of points $S$ clustered, if the largest distance between any pair of them (the diameter of $S$) is at most 1. \cite{chan_et_al:LIPIcs:2016:5920} present a $O(n\log n)$ algorithm to solve for this property.
 
 Here is the text of your introduction.
 We are using \cite{bokal_et_al:LIPIcs:2015:5113} and \cite{chan_et_al:LIPIcs:2016:5920}
