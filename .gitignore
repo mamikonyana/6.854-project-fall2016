@@ -12,3 +12,6 @@ test/tmp
 
 # generated data files
 data/10k_random_walk_2d.csv
+
+bench/*.exe
+bench/*.txt

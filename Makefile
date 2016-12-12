@@ -9,16 +9,35 @@ TEST_DIR = test
 
 default: clean ${BUILD_DIR}/main
 
+test_files = $(wildcard ${TEST_DIR}/test_*.cpp)
+all_cpp_files = $(wildcard ${PROJECT_SRC}/*.cpp)
+cpp_files = $(filter-out ${PROJECT_SRC}/main.cpp, $(all_cpp_files))
+
 clean:
 	rm -f ${BUILD_DIR}/main
 .PHONY: clean
 
+plots/random_walk_0.02.png: 
+	mkdir -p plots
+	python vis/answer_triangle.py bench/naive_diameter-0.02.txt --png plots/random_walk_0.02.png
+	open plots/random_walk_0.02.png
+
+bench/naive_diameter-0.02.txt: data/10k_random_walk_2d-0.02.csv bench/naive_diameter.exe
+	./bench/naive_diameter.exe data/10k_random_walk_2d-0.02.csv bench/naive_diameter-0.02.txt
+
+data/10k_random_walk_2d-0.02.csv:
+	python datagen/random_walk_2d.py -o data/10k_random_walk_2d-0.02.csv --step-size 0.02
+
 DATA=data/10k_random_walk_2d.csv
 
-run: ${BUILD_DIR}/main ${DATA}
+bench/naive_diameter.exe:
+	${CC} ${CCFLAGS} -o bench/naive_diameter.exe bench/naive_diameter.cpp ${cpp_files}
+
+naive: bench/naive_diameter.exe ${DATA}
 	@echo Build Successful! Running...
 	@echo
-	./${BUILD_DIR}/main ${DATA}
+	./bench/naive_diameter.exe ${DATA} bench/naive_diameter.txt
+	head bench/naive_diameter.txt
 .PHONY: rebuildrun
 
 N = 2000 # If i put this as a target specific variable, variable substitution fails...
@@ -32,14 +51,11 @@ data/gaussian_%.csv:
 	python datagen/moving_gaussian.py --num-points $* -o data/gaussian_$*.csv --speed 1 --covariance 0.2 0 0 1
 
 data/10k_random_walk_2d.csv:
-	python datagen/random_walk_2d.py -o data/10k_random_walk_2d.csv --step-size 0.05
+	python datagen/random_walk_2d.py -o data/10k_random_walk_2d.csv --step-size 0.02
 
 build/main:
-	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp src/helpers.cpp src/naive.cpp src/bce.cpp src/polyarc.cpp
+	${CC} ${CCFLAGS} -o ${BUILD_DIR}/main src/main.cpp ${cpp_files}
 
-test_files = $(wildcard ${TEST_DIR}/test_*.cpp)
-all_cpp_files = $(wildcard ${PROJECT_SRC}/*.cpp)
-cpp_files = $(filter-out ${PROJECT_SRC}/main.cpp, $(all_cpp_files))
 
 test:
 	@echo test files ${test_files}
