@@ -356,16 +356,19 @@ std::vector<Vertex> intersect_envelopes(std::vector<Vertex> &upper1, std::vector
                                                   envelopes[1 - s][front[1 - s]].location,
                                                   envelopes[1 - s][front[1 - s] - 1].location);
             }
-            assert(new_intersection.size() == 1);
-            // printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
+            // printf("new_intersection.size() = %d\n", new_intersection.size());
+            if (new_intersection.size() > 0) {
+                assert(new_intersection.size() == 1);
+                // printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
 
-            auto &prev = res[res.size() - 1];
-            if (prev.circle_index == envelopes[new_lower][front[new_lower] - 1].circle_index) {
-                assert(prev.arch_center == envelopes[new_lower][front[new_lower] - 1].arch_center);
-            } else {
-                res.push_back(Vertex{ new_intersection[0],
-                                      envelopes[new_lower][front[new_lower] - 1].arch_center,
-                                      envelopes[new_lower][front[new_lower] - 1].circle_index });
+                auto &prev = res[res.size() - 1];
+                if (prev.circle_index == envelopes[new_lower][front[new_lower] - 1].circle_index) {
+                    assert(prev.arch_center == envelopes[new_lower][front[new_lower] - 1].arch_center);
+                } else {
+                    res.push_back(Vertex{ new_intersection[0],
+                                          envelopes[new_lower][front[new_lower] - 1].arch_center,
+                                          envelopes[new_lower][front[new_lower] - 1].circle_index });
+                }
             }
         }
 
@@ -486,7 +489,8 @@ intersect_upper_lower(std::vector<Vertex> upper, std::vector<Vertex> lower) {
                     }
                     res.first.push_back(upper[u]);
                 } else {
-                    if (state == 1) {
+                    // if (state == 1) {
+                    if (state == 1 && new_intersection.size() > 0) {
                         assert(new_intersection.size() == 1);
                         res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
                         res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
@@ -516,7 +520,7 @@ intersect_upper_lower(std::vector<Vertex> upper, std::vector<Vertex> lower) {
                     }
                     res.second.push_back(lower[l]);
                 } else {
-                    if (state == 1) {
+                    if (state == 1 && new_intersection.size() > 0) {
                         printf("%d %d %d\n", u, l, new_intersection.size());
                         assert(new_intersection.size() == 1);
                         res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});

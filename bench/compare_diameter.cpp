@@ -32,9 +32,22 @@ int main(int argc, char *argv[]) {
             int x = rand() % data.size();
             printf("[%d]: %d == %d, ", x, naive_a[x], cp_ans[x]);
             if (naive_a[x] != cp_ans[x]) {
-                printf("Houston we've got a problem!");
+                printf("Houston we've got a problem!\n");
                 // return -1;
             }
+        }
+        printf("\n");
+
+        printf("All checks..\n");
+        bool works = true;
+        for (int i = 0; i < data.size(); ++i) {
+            if (naive_a[i] != cp_ans[i]) {
+                printf("Houston we've got a problem!\n");
+                works = false;
+            }
+        }
+        if (works) {
+            printf("Heuston we don't have problems!");
         }
         printf("\n");
     }
