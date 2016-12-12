@@ -60,23 +60,28 @@ void test_intersect_circles_3_normal() {
     PolyArc pa12 = pa1.intersect(pa2);
     std::vector<Vertex> vertices;
     vertices = pa12.getVertices();
-    assert(vertices.size() == 2);
-    assert_equal(vertices[0].location.x, -0.302138, 1e-5);
-    assert_equal(vertices[0].location.y, -0.523318, 1e-5);
-    assert_equal(vertices[1].location.x, 0.577138, 1e-5);
-    assert_equal(vertices[1].location.y, 0.999632, 1e-5);
+
+
+    assert(vertices.size() == 4);
+    assert(vertices[0].location == (Point2D{-0.450000000, 0.000000000}));
+    assert(vertices[1].location == (Point2D{0.577137635, 0.999631707}));
+    assert(vertices[2].location == (Point2D{0.725000000, 0.476313972}));
+    assert(vertices[3].location == (Point2D{-0.302137635, -0.523317734}));
 
     PolyArc pa123 = pa12.intersect(pa3);
     vertices = pa123.getVertices();
-    assert(vertices.size() == 3);
 
-    assert_equal(vertices[0].location.x, -0.302138, 1e-5);
-    assert_equal(vertices[0].location.y, -0.523318, 1e-5);
-    assert_equal(vertices[1].location.x, -0.302138, 1e-5);
-    assert_equal(vertices[1].location.y, 0.523318, 1e-5);
-    assert_equal(vertices[2].location.x, 0.604275, 1e-5);
-    assert_equal(vertices[2].location.y, 0.000000, 1e-5);
-    // printf("vertices %f %f %f %f %f %f\n", vertices[0].location.x, vertices[0].location.y, vertices[1].location.x, vertices[1].location.y, vertices[2].location.x, vertices[2].location.y);
+    // for (auto& v : vertices) {
+    //     printf("%.9f %.9f\n", v.location.x, v.location.y);
+    // }
+
+    assert(vertices.size() == 4);
+
+    assert(vertices[0].location == (Point2D{-0.450000000,  0.000000000}));
+    assert(vertices[1].location == (Point2D{-0.302137635,  0.523317734}));
+    assert(vertices[2].location == (Point2D{ 0.604275270, -0.000000000}));
+    assert(vertices[3].location == (Point2D{-0.302137635, -0.523317734}));
+
     printf("PASS: intersect_circles_3_normal\n\n");
 }
 

@@ -66,13 +66,37 @@ PolyArc PolyArc::intersect(PolyArc other) {
     }
 
     std::vector< Vertex > upperIntersect = intersect_envelopes(upper, other.upper, -1);
+
+    // printf("Upper vertices\n");
+    // for (auto& v : upperIntersect) {
+    //     print_vertex(v);
+    // }
+    // printf("\n");
+
     std::vector< Vertex > lowerIntersect = intersect_envelopes(lower, other.lower,  1);
+
+    // printf("Lower vertices\n");
+    // for (auto& v : lowerIntersect) {
+    //     print_vertex(v);
+    // }
+    // printf("\n");
 
     auto upperLowerIntersect = intersect_upper_lower(upperIntersect, lowerIntersect);
 
     PolyArc res = PolyArc();
     res.upper = upperLowerIntersect.first;
+    // printf("Res upper\n");
+    // for (auto& v : res.upper) {
+    //     print_vertex(v);
+    // }
+    // printf("\n");
+
     res.lower = upperLowerIntersect.second;
+    // printf("Res lower\n");
+    // for (auto& v : res.lower) {
+    //     print_vertex(v);
+    // }
+    // printf("\n");
 
     return res;
 }
@@ -84,7 +108,8 @@ std::vector<Vertex> PolyArc::getVertices() {
     if (isPoint()) {
         return upper;
     }
-    std::vector<Vertex> vertices(upper.size() + lower.size() - 2);
+
+    std::vector<Vertex> vertices;
     vertices.insert(vertices.begin(), upper.begin(), upper.end());
     vertices.insert(vertices.end(), lower.rbegin() + 1, lower.rend() - 1);
     return vertices;
@@ -457,5 +482,13 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
     }
 
     return res;
+}
+
+void print_vertex(Vertex v, std::string s) {
+    printf("%s: %.2f %.2f %.2f %.2f %d\n", s.c_str(), v.location.x, v.location.y, v.arch_center.x, v.arch_center.y, v.circle_index);
+}
+
+void print_vertex(Vertex v) {
+    print_vertex(v, "");
 }
 

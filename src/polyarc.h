@@ -68,5 +68,9 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
 
 std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(std::vector< Vertex > upper, std::vector< Vertex > lower);
 
+void print_vertex(Vertex v, std::string s);
+
+void print_vertex(Vertex v);
+
 #endif // POLYARC_H
 
