@@ -25,6 +25,10 @@ We've implemented
 \end{itemize}
 
 \section{Algorithms}
+\subsection{$k^*$}
+
+Let $k^*(i) = \inf_{m \geq i} \{d(i, m) > 1\}$. \textbf{Claim} $j^*(i-1) = \min(j^*(i), k^*(i-1))$. Thus after we calculate $k^*(i)$ for all elements, we can calculate $j^*(i)$ in $O(n)$ time by looping over all indices in the reverse order.
+
 \subsection{Bokan et al Overview}
 Upper triangle method
 
