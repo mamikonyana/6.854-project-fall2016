@@ -39,13 +39,13 @@ We've implemented
 Let $k^*(i) = \inf_{m \geq i} \{d(i, m) > 1\}$. \textbf{Claim} $j^*(i-1) = \min(j^*(i), k^*(i-1))$. Thus after we calculate $k^*(i)$ for all elements, we can calculate $j^*(i)$ in $O(n)$ time by looping over all indices in the reverse order.
 
 \subsection{Bokan et al Overview}
-Upper triangle method
+TODO: A page that deftly describes the algorithm we've implemented.
 
 \subsection{Chan, Prat Overview}
-Range tree method.
+TODO: A page that deftly describes the algorithm we've implemented.
 
 \section{Implementation Details}
-Talk about sweep line, etc.
+The novelty of the algorithm from Chan, Prat is how they combine 1D range tree, with secondary structure that stores circle intersections. But they leave a lot of implementation details. Most importantly they just claim that it's possible to implement a data structure that stores circle intersections such that, it can answer \textit{contains} queries in $\log n$ time and can be combined with another intersections data structure in linear time.
 
 \section{Experimental Results}
 
