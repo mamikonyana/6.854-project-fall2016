@@ -53,6 +53,15 @@ void test_range_tree_construct() {
     printf("PASS: range_tree_construct\n");
 }
 
+void test_range_tree_7() {
+    printf("START: range_tree_7\n");
+
+    std::vector<Point> points = load_csv_data("data/segfault.csv");
+    RangeTree rt = RangeTree(points); // 0, 1, 2, 3, 4
+
+    printf("PASS: range_tree_7\n\n");
+}
+
 void test_locate_tree() {
     std::vector<Point> points = load_csv_data("data/5-gon-0.9radius.csv");
     RangeTree rt = RangeTree(points); // 0, 1, 2, 3, 4
@@ -78,5 +87,6 @@ void test_locate_tree() {
 int main() {
     test_range_tree_construct();
     test_locate_tree();
+    test_range_tree_7();
     return 0;
 }

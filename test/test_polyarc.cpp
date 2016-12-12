@@ -323,6 +323,33 @@ void test_notfoundassert() {
     printf("PASS: notfoundassert\n");
 }
 
+void test_segfault() {
+    printf("START: segfault\n");
+    std::vector<Point> data = load_csv_data("data/notfoundassert.csv");
+
+    std::vector< PolyArc > single(7);
+    for (int i = 0; i < data.size(); ++i) {
+        single[i] = PolyArc(Point2D{data[i][0], data[i][1]}, i);
+        printf("done single %d\n", i);
+    }
+
+    std::vector< PolyArc > pairwise(4);
+    for (int i = 0; i < 3; ++i) {
+        pairwise[i] = single[2*i].intersect(single[2 * i + 1]);
+        printf("done pairwise %d - %d\n", 2 * i, 2 * i + 1);
+    }
+    pairwise[3] = single[6];
+
+    std::vector< PolyArc > quad(2);
+    for (int i = 0; i < 2; ++i) {
+        quad[i] = pairwise[2 * i].intersect(pairwise[2 * i + 1]);
+        printf("done quad %d - %d\n", 4 * i, std::min(4 * i + 3, 6));
+    }
+
+    quad[0].intersect(quad[1]);
+
+    printf("PASS: segfaultt\n");
+}
 
 int main() {
     // test_contains_manual();
@@ -337,6 +364,7 @@ int main() {
     // test_intersect_envelopes_empty();
     // test_intersect_envelopes_degenerate();
     test_notfoundassert();
+    test_segfault();
     return 0;
 }
 
