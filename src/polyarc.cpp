@@ -405,7 +405,6 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
         }
 
         if (fequal(upper[u].location.x, lower[l].location.x)) {
-            assert(u > 0 && l > 0);
             if ((state == 0 && upper[u].location.y > lower[l].location.y) ||
                 (state == 1 && upper[u].location.y < lower[l].location.y)) {
                 assert(new_intersection.second);
