@@ -348,6 +348,31 @@ void test_intersect_lower_upper_degenerate() {
     printf("PASS: test_intersect_lower_upper_degenerate\n\n");
 }
 
+void test_intersect_lower_upper_empty() {
+    printf("START: test_intersect_lower_upper_empty\n");
+
+    Vertex v1 = {Point2D{1, 0}, Point2D{2, 0}, 0};
+    Vertex v2 = {Point2D{3, 0}, Point2D{2, 0}, 0};
+
+    Vertex v3 = {Point2D{0.5, 2}, Point2D{1.5, 2}, 1};
+    Vertex v4 = {Point2D{2.5, 2}, Point2D{1.5, 2}, 1};
+
+    auto upper = std::vector< Vertex >{v1, v2};
+    auto lower = std::vector< Vertex >{v3, v4};
+
+    auto res = intersect_upper_lower(upper, lower);
+
+    printf("%lu\n", res.first.size());
+    for (auto& v : res.first) {
+        print_vertex(v);
+    }
+
+    assert(res.first.size() == 0);
+    assert(res.second.size() == 0);
+
+    printf("PASS: test_intersect_lower_upper_empty\n\n");
+}
+
 void test_notfoundassert() {
     printf("START: notfoundassert\n");
     std::vector<Point> data = load_csv_data("data/notfoundassert.csv");
@@ -414,6 +439,7 @@ int main() {
     test_intersect_envelopes_degenerate();
     test_intersect_lower_upper_degenerate();
     test_intersect_lower_upper_no_inside_points();
+    test_intersect_lower_upper_empty();
     test_notfoundassert();
     test_segfault();
     return 0;

@@ -466,59 +466,64 @@ intersect_upper_lower(std::vector<Vertex> upper, std::vector<Vertex> lower) {
             u++;
             l++;
         } else if (upper[u].location.x < lower[l].location.x) {
-            auto &ac = lower[l - 1].arch_center;
-            double &x = upper[u].location.x;
+            if (l > 0) {
+                auto &ac = lower[l - 1].arch_center;
+                double &x = upper[u].location.x;
 
-            double y = ac.y - sqrt(1 - (ac.x - x) * (ac.x - x));
+                double y = ac.y - sqrt(1 - (ac.x - x) * (ac.x - x));
 
-            if (fequal(y, upper[u].location.y)) {
-                res.first.push_back(upper[u]);
-                res.second.push_back(Vertex{upper[u].location, lower[l - 1].arch_center, lower[l - 1].circle_index});
-                state++;
-            } else if (y < upper[u].location.y) {
-                if (state == 0) {
-                    assert(new_intersection.size() == 1);
-                    res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
-                    res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
-
+                if (fequal(y, upper[u].location.y)) {
+                    res.first.push_back(upper[u]);
+                    res.second.push_back(Vertex{upper[u].location, lower[l - 1].arch_center, lower[l - 1].circle_index});
                     state++;
-                }
-                res.first.push_back(upper[u]);
-            } else {
-                if (state == 1) {
-                    assert(new_intersection.size() == 1);
-                    res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
-                    res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
+                } else if (y < upper[u].location.y) {
+                    if (state == 0) {
+                        assert(new_intersection.size() == 1);
+                        res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
+                        res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
 
-                    state++;
+                        state++;
+                    }
+                    res.first.push_back(upper[u]);
+                } else {
+                    if (state == 1) {
+                        assert(new_intersection.size() == 1);
+                        res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
+                        res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
+
+                        state++;
+                    }
                 }
             }
             u++;
         } else { // upper[u].location.x > lower[l].location.x  ######## should be symmetric
-            auto&  ac = upper[u - 1].arch_center;
-            double& x = lower[l].location.x;
+            if (u > 0) {
+                auto&  ac = upper[u - 1].arch_center;
+                double& x = lower[l].location.x;
 
-            double y = ac.y + sqrt(1 - (ac.x - x) * (ac.x - x));
+                double y = ac.y + sqrt(1 - (ac.x - x) * (ac.x - x));
 
-            if (fequal(y, lower[l].location.y)) {
-                res.first.push_back(Vertex{lower[l].location, upper[u - 1].arch_center, upper[l - 1].circle_index});
-                res.second.push_back(lower[l]);
-            } else if (y > lower[u].location.y) {
-                if (state == 0) {
-                    assert(new_intersection.size() == 1);
-                    res.first.push_back(Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
-                    res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
+                if (fequal(y, lower[l].location.y)) {
+                    res.first.push_back(Vertex{lower[l].location, upper[u - 1].arch_center, upper[l - 1].circle_index});
+                    res.second.push_back(lower[l]);
+                } else if (y > lower[u].location.y) {
+                    if (state == 0) {
+                        assert(new_intersection.size() == 1);
+                        res.first.push_back(Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
+                        res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
 
-                    state++;
-                }
-                res.second.push_back(lower[l]);
-            } else {
-                if (state == 1) {
-                    assert(new_intersection.size() == 1);
-                    res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
-                    res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
+                        state++;
+                    }
+                    res.second.push_back(lower[l]);
+                } else {
+                    if (state == 1) {
+                        printf("%d %d %d\n", u, l, new_intersection.size());
+                        assert(new_intersection.size() == 1);
+                        res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
+                        res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
 
-                    state++;
+                        state++;
+                    }
                 }
             }
 
