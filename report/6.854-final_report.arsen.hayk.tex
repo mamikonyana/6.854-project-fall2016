@@ -42,7 +42,28 @@ Range tree method.
 Talk about sweep line, etc.
 
 \section{Experimental Results}
-Talk about sweep line, etc.
+
+\subsection{Monotonicity}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[height=8cm]{plots/monotonicity_moving_gaussian}
+  \caption{Monotonicity algorithm results for moving point with Gaussian noise.}
+  \label{fig:monotonicity_demo}
+\end{figure}
+
+First let's look at the monotonicity resutls. Here we use the following dataset.
+
+We have a point moving along $x$ axis in the positive direction with speed 1 (i.e. 1 per index), we add Gaussian noise to this point to make the problem interseting. In Figure \ref{fig:monotonicity_demo} you can see results for noise with standard deviations $\sigma_y = 0.05, \sigma_y = 1$. After we generate the dataset, we run Bokal et. al algorithm on the dataset and the answer boundarries of the matrix $A$ that indicates if for points in range $[i, j]$ exists a common direction that has positive dot product with each of the displacements.
+
+Figure \ref{fig:monotonicity_comparison} shows runtime differences in millliseonds between Naive algorithm and algorithm we presented from Bokal et al.
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[height=5cm]{plots/monotonicity_comparison}
+  \caption{Runtimes (in millseconds) of Naive and Bokal et. al}
+  \label{fig:monotonicity_comparison}
+\end{figure}
+
+\subsection{Diameter}
 \begin{figure}[!h]
   \centering
   \includegraphics[height=8cm]{plots/diameter_random_walk}
@@ -50,12 +71,18 @@ Talk about sweep line, etc.
   \label{fig:diameter_demo}
 \end{figure}
 
-\begin{figure}[!h]
+Now the dataset is a random walk starting at the origin. At each step we uniform randomly pick a direction, and move 0.3 distance in that direction. We keep doing this until we have enough points for an experiment.
+
+Figure \ref{fig:diameter_demo} shows boundaries of points that satisfy all points in range $[i, j]$ fall into some circle with radius 1.
+
+Figure \ref{fig:diameter_comparison} will show results comparing runtimes of Naive algorithm with algorithm we presented from Bokal et al.
+\begin{figure}[!ht]
   \centering
-  \includegraphics[height=8cm]{plots/monotonicity_moving_gaussian}
-  \caption{Caption...}
-  \label{fig:monotonicity_demo}
+  \includegraphics[height=5cm]{plots/diameter_comparison}
+  \caption{Runtimes (in millseconds) of Naive and Chan, Prat [Similar to Figure \ref{fig:monotonicity_comparison}}
+  \label{fig:diameter_comparison}
 \end{figure}
+
 
 \section{Conclusion}
 This was a great project!
