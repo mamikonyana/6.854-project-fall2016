@@ -15,7 +15,14 @@ cpp_files = $(filter-out ${PROJECT_SRC}/main.cpp, $(all_cpp_files))
 
 clean:
 	rm -f ${BUILD_DIR}/main
+	rm bench/*.exe bench/*.txt bench/*.csv
 .PHONY: clean
+
+plots/compare_monotonicity.png: bench/compare_monotonicity.csv
+	cat $^
+
+bench/compare_monotonicity.csv: bench/compare_monotonicity.exe data/10k_gon-0.55.csv data/10k_random_walk_2d-0.02.csv
+	./$^
 
 plots/monotonicity_10k_gon-0.55.png: bench/bce_monotonicity_10k_gon-0.55.txt
 	mkdir -p plots
