@@ -77,9 +77,9 @@ void test_intersect_circles_3_normal() {
 
     assert(vertices.size() == 4);
 
-    assert(vertices[0].location == (Point2D{-0.450000000,  0.000000000}));
-    assert(vertices[1].location == (Point2D{-0.302137635,  0.523317734}));
-    assert(vertices[2].location == (Point2D{ 0.604275270, -0.000000000}));
+    assert(vertices[0].location == (Point2D{-0.450000000, 0.000000000}));
+    assert(vertices[1].location == (Point2D{-0.302137635, 0.523317734}));
+    assert(vertices[2].location == (Point2D{0.604275270, -0.000000000}));
     assert(vertices[3].location == (Point2D{-0.302137635, -0.523317734}));
 
     printf("PASS: intersect_circles_3_normal\n\n");
@@ -100,9 +100,9 @@ void test_intersect_circles_3_normal_non_pairwise() {
     auto vertices = pa123.getVertices();
     assert(vertices.size() == 4);
 
-    assert(vertices[0].location == (Point2D{1.000000000,  0.000000000}));
-    assert(vertices[1].location == (Point2D{1.500000000,  0.866025404})); 
-    assert(vertices[2].location == (Point2D{2.000000000,  0.000000000})); 
+    assert(vertices[0].location == (Point2D{1.000000000, 0.000000000}));
+    assert(vertices[1].location == (Point2D{1.500000000, 0.866025404}));
+    assert(vertices[2].location == (Point2D{2.000000000, 0.000000000}));
     assert(vertices[3].location == (Point2D{1.500000000, -0.866025404}));
 
     printf("PASS: intersect_circles_3_normal_non_pairwise\n\n");
@@ -205,8 +205,8 @@ void test_intersect_envelopes_basic() {
     Vertex v3 = {Point2D{2, 0}, Point2D{1, 0}, 0};
     Vertex v4 = {Point2D{3, 0}, Point2D{2, 0}, 1};
 
-    auto upper1 = std::vector< Vertex >{v1, v3};
-    auto upper2 = std::vector< Vertex >{v2, v4};
+    auto upper1 = std::vector<Vertex>{v1, v3};
+    auto upper2 = std::vector<Vertex>{v2, v4};
 
     auto res = intersect_envelopes(upper1, upper2, -1);
 
@@ -241,8 +241,8 @@ void test_intersect_envelopes_below() {
     Vertex v3 = {Point2D{1.5, 1}, Point2D{2.5, 1}, 1};
     Vertex v4 = {Point2D{3.5, 1}, Point2D{2.5, 1}, 1};
 
-    auto upper1 = std::vector< Vertex >{v1, v2};
-    auto upper2 = std::vector< Vertex >{v3, v4};
+    auto upper1 = std::vector<Vertex>{v1, v2};
+    auto upper2 = std::vector<Vertex>{v3, v4};
 
     auto res = intersect_envelopes(upper1, upper2, -1);
     // for (auto& v : res) {
@@ -263,8 +263,8 @@ void test_intersect_envelopes_empty() {
     Vertex v3 = {Point2D{3, 0}, Point2D{4, 0}, 1};
     Vertex v4 = {Point2D{5, 0}, Point2D{4, 0}, 1};
 
-    auto upper1 = std::vector< Vertex >{v1, v2};
-    auto upper2 = std::vector< Vertex >{v3, v4};
+    auto upper1 = std::vector<Vertex>{v1, v2};
+    auto upper2 = std::vector<Vertex>{v3, v4};
 
     auto res = intersect_envelopes(upper1, upper2, -1);
 
@@ -284,8 +284,8 @@ void test_intersect_envelopes_degenerate() {
     Vertex v3 = {Point2D{2, 0}, Point2D{3, 0}, 1};
     Vertex v4 = {Point2D{4, 0}, Point2D{3, 0}, 1};
 
-    auto upper1 = std::vector< Vertex >{v1, v2};
-    auto upper2 = std::vector< Vertex >{v3, v4};
+    auto upper1 = std::vector<Vertex>{v1, v2};
+    auto upper2 = std::vector<Vertex>{v3, v4};
 
     auto res = intersect_envelopes(upper1, upper2, -1);
 
@@ -307,8 +307,8 @@ void test_intersect_lower_upper_no_inside_points() {
     Vertex v3 = {Point2D{1, 1.5}, Point2D{2, 1.5}, 1};
     Vertex v4 = {Point2D{3, 1.5}, Point2D{2, 1.5}, 1};
 
-    auto upper = std::vector< Vertex >{v1, v2};
-    auto lower = std::vector< Vertex >{v3, v4};
+    auto upper = std::vector<Vertex>{v1, v2};
+    auto lower = std::vector<Vertex>{v3, v4};
 
     auto res = intersect_upper_lower(upper, lower);
 
@@ -332,8 +332,8 @@ void test_intersect_lower_upper_degenerate() {
     Vertex v3 = {Point2D{1, 2}, Point2D{2, 2}, 1};
     Vertex v4 = {Point2D{3, 2}, Point2D{2, 2}, 1};
 
-    auto upper = std::vector< Vertex >{v1, v2};
-    auto lower = std::vector< Vertex >{v3, v4};
+    auto upper = std::vector<Vertex>{v1, v2};
+    auto lower = std::vector<Vertex>{v3, v4};
 
     auto res = intersect_upper_lower(upper, lower);
 
@@ -376,20 +376,20 @@ void test_segfault() {
     printf("START: segfault\n");
     std::vector<Point> data = load_csv_data("data/notfoundassert.csv");
 
-    std::vector< PolyArc > single(7);
+    std::vector<PolyArc> single(7);
     for (int i = 0; i < data.size(); ++i) {
         single[i] = PolyArc(Point2D{data[i][0], data[i][1]}, i);
         // printf("done single %d\n", i);
     }
 
-    std::vector< PolyArc > pairwise(4);
+    std::vector<PolyArc> pairwise(4);
     for (int i = 0; i < 3; ++i) {
-        pairwise[i] = single[2*i].intersect(single[2 * i + 1]);
+        pairwise[i] = single[2 * i].intersect(single[2 * i + 1]);
         // printf("done pairwise %d - %d\n", 2 * i, 2 * i + 1);
     }
     pairwise[3] = single[6];
 
-    std::vector< PolyArc > quad(2);
+    std::vector<PolyArc> quad(2);
     for (int i = 0; i < 2; ++i) {
         quad[i] = pairwise[2 * i].intersect(pairwise[2 * i + 1]);
         // printf("done quad %d - %d\n", 4 * i, std::min(4 * i + 3, 6));

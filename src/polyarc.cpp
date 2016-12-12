@@ -49,7 +49,7 @@ PolyArc PolyArc::intersect(PolyArc other) {
     }
 
     if (other.isPoint()) {
-        Point2D& pt = other.upper[0].location;
+        Point2D &pt = other.upper[0].location;
 
         for (auto &vertex : upper) {
             if (!circle_contains(vertex.arch_center, vertex.location)) {
@@ -65,7 +65,7 @@ PolyArc PolyArc::intersect(PolyArc other) {
         return other;
     }
 
-    std::vector< Vertex > upperIntersect = intersect_envelopes(upper, other.upper, -1);
+    std::vector<Vertex> upperIntersect = intersect_envelopes(upper, other.upper, -1);
 
     // printf("Upper vertices\n");
     // for (auto& v : upperIntersect) {
@@ -73,7 +73,7 @@ PolyArc PolyArc::intersect(PolyArc other) {
     // }
     // printf("\n");
 
-    std::vector< Vertex > lowerIntersect = intersect_envelopes(lower, other.lower,  1);
+    std::vector<Vertex> lowerIntersect = intersect_envelopes(lower, other.lower, 1);
 
     // printf("Lower vertices\n");
     // for (auto& v : lowerIntersect) {
@@ -141,17 +141,40 @@ bool PolyArc::contains(Point2D query_point) {
  * @return return -1, if x has only one neighbour. otherwise index of the left neighbour.
  */
 int PolyArc::find_neighbours(std::vector<Vertex> vector, double query_x) {
-    // TODO: make efficient (binary search style).
     if (vector[0].location.x > query_x) {
         return -1; // No left neighbour.
     }
-    for (int i = 1; i < vector.size(); i++) {
+    int a = 0;
+    int b = vector.size() - 1;
+    while (a != b) {
+        if (b - a == 1) {
+            if (vector[a].location.x <= query_x && vector[b].location.x >= query_x) {
+                return a;
+            } else {
+                return -1;
+            }
+        }
+        int i = (b + a) / 2;
         if (vector[i].location.x > query_x) {
-            // Found right neighbour.
-            return i - 1;
+            b = i;
+        } else {
+            a = i;
         }
     }
-    return -1; // No right neighbour.
+    return -1; // It should not get here.
+    // if (b == vector.size() - 1) {
+    //     return -1; // No right neighbour.
+    // } else {
+    //     return b;
+    // }
+
+    // for (int i = 1; i < vector.size(); i++) {
+    //     if (vector[i].location.x > query_x) {
+    //         // Found right neighbour.
+    //         return i - 1;
+    //     }
+    // }
+    // return -1; // No right neighbour.
 }
 
 ////////////// helpers ////////////////
@@ -214,7 +237,7 @@ bool on_arc(Point2D center, Point2D a, Point2D b, Point2D pt) {
     return direction(center, a, pt) < 0 && direction(center, pt, b) < 0;
 }
 
-std::vector< Point2D > intersect_circle_arc(Point2D center, Point2D arc_center, Point2D a, Point2D b) {
+std::vector<Point2D> intersect_circle_arc(Point2D center, Point2D arc_center, Point2D a, Point2D b) {
     // assumes arcs are given in clockwise order
     auto circle_intersections = intersect_circles(center, arc_center);
     std::vector<Point2D> res;
@@ -241,11 +264,11 @@ std::vector< Point2D > intersect_arcs(Point2D c1, Point2D a1, Point2D b1, Point2
     return res;
 }
 
-std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::vector< Vertex >& upper2, int dir) {
-    std::vector< Vertex > res;
+std::vector<Vertex> intersect_envelopes(std::vector<Vertex> &upper1, std::vector<Vertex> &upper2, int dir) {
+    std::vector<Vertex> res;
 
-    std::vector< std::vector< Vertex > > envelopes = {upper1, upper2};
-    std::vector< int > front(2, 0);
+    std::vector<std::vector<Vertex> > envelopes = {upper1, upper2};
+    std::vector<int> front(2, 0);
 
     int lower = -1;
     double lastX;
@@ -285,7 +308,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
         }
 
         Point2D ac = envelopes[1 - s][front[1 - s] - 1].arch_center;
-        
+
         Point2D other = {curr.x, ac.y - dir * sqrt(1 - (curr.x - ac.x) * (curr.x - ac.x))};
 
         // printf("curr = (%.2f %.2f); other = (%.2f, %.2f)\n", curr.x, curr.y, other.x, other.y);
@@ -336,7 +359,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
             assert(new_intersection.size() == 1);
             // printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
 
-            auto& prev = res[res.size() - 1];
+            auto &prev = res[res.size() - 1];
             if (prev.circle_index == envelopes[new_lower][front[new_lower] - 1].circle_index) {
                 assert(prev.arch_center == envelopes[new_lower][front[new_lower] - 1].arch_center);
             } else {
@@ -347,7 +370,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
         }
 
         if (res.size() > 0) {
-            auto& prev = *res.rbegin();
+            auto &prev = *res.rbegin();
             if (prev.circle_index == new_vertex.circle_index) {
                 assert(prev.arch_center == new_vertex.arch_center);
             } else {
@@ -362,7 +385,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
     }
     if (lower != -1) {
         auto new_vertex = envelopes[lower][front[lower] - 1];
-        auto& ac = envelopes[lower][front[lower] - 1].arch_center;
+        auto &ac = envelopes[lower][front[lower] - 1].arch_center;
         double lastY = ac.y - dir * sqrt(1 - (lastX - ac.x) * (lastX - ac.x));
         res.push_back(Vertex{Point2D{lastX, lastY}, ac, envelopes[lower][front[lower] - 1].circle_index});
     }
@@ -370,8 +393,9 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
     return res;
 }
 
-std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(std::vector< Vertex > upper, std::vector< Vertex > lower) {
-    auto res = std::make_pair(std::vector< Vertex >(), std::vector< Vertex >());
+std::pair<std::vector<Vertex>, std::vector<Vertex> >
+intersect_upper_lower(std::vector<Vertex> upper, std::vector<Vertex> lower) {
+    auto res = std::make_pair(std::vector<Vertex>(), std::vector<Vertex>());
 
     int state = 0;
     int u = 0, l = 0;
@@ -442,15 +466,15 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
             u++;
             l++;
         } else if (upper[u].location.x < lower[l].location.x) {
-            auto&  ac = lower[l - 1].arch_center;
-            double& x = upper[u].location.x;
+            auto &ac = lower[l - 1].arch_center;
+            double &x = upper[u].location.x;
 
             double y = ac.y - sqrt(1 - (ac.x - x) * (ac.x - x));
 
             if (fequal(y, upper[u].location.y)) {
-                res.first.push_back (upper[u]);
+                res.first.push_back(upper[u]);
                 res.second.push_back(Vertex{upper[u].location, lower[l - 1].arch_center, lower[l - 1].circle_index});
-                state ++;
+                state++;
             } else if (y < upper[u].location.y) {
                 if (state == 0) {
                     assert(new_intersection.size() == 1);
@@ -477,7 +501,7 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
             double y = ac.y + sqrt(1 - (ac.x - x) * (ac.x - x));
 
             if (fequal(y, lower[l].location.y)) {
-                res.first.push_back (Vertex{lower[l].location, upper[u - 1].arch_center, upper[l - 1].circle_index});
+                res.first.push_back(Vertex{lower[l].location, upper[u - 1].arch_center, upper[l - 1].circle_index});
                 res.second.push_back(lower[l]);
             } else if (y > lower[u].location.y) {
                 if (state == 0) {
@@ -506,7 +530,8 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
 }
 
 void print_vertex(Vertex v, std::string s) {
-    printf("%s: %.9f %.9f %.9f %.9f %d\n", s.c_str(), v.location.x, v.location.y, v.arch_center.x, v.arch_center.y, v.circle_index);
+    printf("%s: %.9f %.9f %.9f %.9f %d\n", s.c_str(), v.location.x, v.location.y, v.arch_center.x, v.arch_center.y,
+           v.circle_index);
 }
 
 void print_vertex(Vertex v) {
