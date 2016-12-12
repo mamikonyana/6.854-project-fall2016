@@ -23,8 +23,7 @@ Suppose we have a data structure that for any index $i$ retrieves the largest in
 
 \cite{bokal_et_al:LIPIcs:2015:5113,chan_et_al:LIPIcs:2016:5920} use their frameworks to efficiently solve the range query problem for different properties $P$. We have implemented one algorithm from each paper. The first one is the \textit{monotonicity} property. A sequence of points $S$ in two-dimensional space is monotone if there is a line $l$, for which if points of $S$ are projected on $l$, their order is maintained. The algorithm described in \cite{bokal_et_al:LIPIcs:2015:5113} is linear. The second one is the \textit{clustering} property. We will call a set of points $S$ clustered, if the largest distance between any pair of them (the diameter of $S$) is at most 1. \cite{chan_et_al:LIPIcs:2016:5920} present a $O(n\log n)$ algorithm to solve for this property.
 
-Here is the text of your introduction.
-We are using \cite{bokal_et_al:LIPIcs:2015:5113} and \cite{chan_et_al:LIPIcs:2016:5920}
+For both of the problems there is a simple algorithm to solve them in quadratic time. We discovered that, while the algorithms presented in \cite{bokal_et_al:LIPIcs:2015:5113,chan_et_al:LIPIcs:2016:5920} are elegant and efficient, their implementation can be extremely complicated with many edge cases. Nevertheless, they are much faster for large enough datasets, thus, can be used in practice.
 
 \section{Our contribution}
 We've implemented
