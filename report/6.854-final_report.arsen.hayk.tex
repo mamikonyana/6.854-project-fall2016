@@ -49,6 +49,9 @@ The novelty of the algorithm from Chan, Prat is how they combine 1D range tree, 
 \section{Experimental Results}
 
 \subsection{Monotonicity}
+
+TODO: Describe Naive algorithm which is a $O(n^2)$ algorithm.
+
 \begin{figure}[!ht]
   \centering
   \includegraphics[height=8cm]{plots/monotonicity_moving_gaussian}
@@ -69,14 +72,17 @@ Figure \ref{fig:monotonicity_comparison} shows runtime differences in millliseon
 \end{figure}
 
 \subsection{Diameter}
+
+Now the dataset is a random walk starting at the origin. At each step we uniform randomly pick a direction, and move 0.3 distance in that direction. We keep doing this until we have enough points for an experiment.
+
+TODO: Describe Naive algorithm which is a $O(n^2)$ algorithm.
+
 \begin{figure}[!h]
   \centering
   \includegraphics[height=8cm]{plots/diameter_random_walk}
   \caption{Caption...}
   \label{fig:diameter_demo}
 \end{figure}
-
-Now the dataset is a random walk starting at the origin. At each step we uniform randomly pick a direction, and move 0.3 distance in that direction. We keep doing this until we have enough points for an experiment.
 
 Figure \ref{fig:diameter_demo} shows boundaries of points that satisfy all points in range $[i, j]$ fall into some circle with radius 1.
 
@@ -88,9 +94,12 @@ Figure \ref{fig:diameter_comparison} will show results comparing runtimes of Nai
   \label{fig:diameter_comparison}
 \end{figure}
 
-
 \section{Conclusion}
-This was a great project!
+It was really challanging to do an implementation project in computational geometry, since sentence takes 100+ lines of code to implement.
+
+Sometimes added complexity is not worth the speedup gained by the algorithm.
+
+This was a great project otherwise, we've implemented couple of algorithms that we have seen during the lecture - sweep line, range tree. Also couple that we hadn't found in Bokal et al and Chan, Prat.
 
 \bibliographystyle{unsrt}
 \bibliography{papers}
