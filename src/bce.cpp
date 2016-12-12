@@ -5,7 +5,7 @@ std::vector<int> bce_monotonicity_2d(std::vector<Point> &points) {
     int n = points.size();
     std::vector<int> answer(n);
 
-    std::vector< std::pair<double, double> > back_ranges(n);
+    std::vector<std::pair<double, double> > back_ranges(n);
 
     int prev = 0, curr = 0;
     while (curr < n - 1) {
@@ -37,7 +37,8 @@ std::vector<int> bce_monotonicity_2d(std::vector<Point> &points) {
             } else {
                 range = range_intersect(range, new_range);
             }
-            // printf("after     %d: %.2f %.2f\n", next, range.first, range.second);
+            printf("BCE=== start %d, after %d: %.2f %.2f\n", curr, next, range.first * 180 / PI,
+                   range.second * 180 / PI);
 
             while (prev < curr) {
                 auto rev_range = back_ranges[prev];
@@ -51,7 +52,9 @@ std::vector<int> bce_monotonicity_2d(std::vector<Point> &points) {
                 if (range_intersect(rev_range, range).first >= 0) {
                     break;
                 }
-                answer[prev++] = next;
+                answer[prev] = next;
+                printf("answer[%d] = %d\n", prev, answer[prev]);
+                prev += 1;
             }
 
             if (range.first < 0) {
@@ -62,7 +65,9 @@ std::vector<int> bce_monotonicity_2d(std::vector<Point> &points) {
         curr = next;
     }
     while (prev < n) {
-        answer[prev++] = n-1;
+        answer[prev] = n - 1;
+        printf("answer[%d] = %d\n", prev, answer[prev]);
+        prev += 1;
     }
 
     // printf("anchor: %d\n", curr);

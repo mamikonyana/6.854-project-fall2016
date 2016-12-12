@@ -39,18 +39,19 @@ void test_monotonicity_bce_vs_naive(std::string file) {
     for (int i = 0; i < bce_answer.size(); ++i) {
         total_jump += bce_answer[i] - i + 1;
     }
-    printf("    average jump %.2f", total_jump / bce_answer.size());
+    // printf("    average jump %.2f", total_jump / bce_answer.size());
 
     printf("\n");
 }
 
 int main() {
-    test_monotonicity_simple_triangle();
-    test_monotonicity_11gon();
-    test_monotonicity_bce_vs_naive("data/20_random_walk_2d-0.3.csv");
-    test_monotonicity_bce_vs_naive("data/gaussian_20.csv");
-    test_monotonicity_bce_vs_naive("data/gaussian_200.csv");
-    test_monotonicity_bce_vs_naive("data/gaussian_2000.csv");
+    // test_monotonicity_simple_triangle();
+    // test_monotonicity_11gon();
+    // test_monotonicity_bce_vs_naive("data/20_random_walk_2d-0.3.csv");
+    test_monotonicity_bce_vs_naive("data/random_walkish.csv");
+    // test_monotonicity_bce_vs_naive("data/gaussian_20.csv");
+    // test_monotonicity_bce_vs_naive("data/gaussian_200.csv");
+    // test_monotonicity_bce_vs_naive("data/gaussian_2000.csv");
     return 0;
 }
 
