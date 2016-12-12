@@ -21,8 +21,8 @@ clean:
 plots/compare_monotonicity.png: bench/compare_monotonicity.csv
 	cat $^
 
-bench/compare_monotonicity.csv: bench/compare_monotonicity.exe data/10k_gon-0.55.csv data/10k_random_walk_2d-0.02.csv
-	./$^
+plots/monotonicity_1k_random_walk_0.02.png: bench/bce_monotonicity_1k_random_walk-0.02.txt bench/naive_monotonicity_1k_random_walk-0.02.txt
+	python vis/answer_triangle.py $^
 
 plots/monotonicity_10k_gon-0.55.png: bench/bce_monotonicity_10k_gon-0.55.txt
 	mkdir -p plots
@@ -34,17 +34,30 @@ plots/diameter_random_walk_0.02.png: bench/naive_diameter_random_walk-0.02.txt
 	python vis/answer_triangle.py bench/naive_diameter_random_walk-0.02.txt --png plots/diameter_random_walk_0.02.png
 	open plots/diameter_random_walk_0.02.png
 
-bench/bce_monotonicity_10k_gon-0.55.txt: data/10k_gon-0.55.csv bench/bce_monotonicity.exe
-	./bench/bce_monotonicity.exe data/10k_gon-0.55.csv bench/bce_monotonicity_10k_gon-0.55.txt
+# debug: bench/bce_monotonicity_1k_random_walk-0.02.txt bench/naive_monotonicity_1k_random_walk-0.02.txt
+# 	python datagen/random_walk_2d.py -o debug.csv --step-size 0.02 --num-points 20
+# 	./$^ $@
 
-bench/naive_diameter_random_walk-0.02.txt: data/10k_random_walk_2d-0.02.csv bench/naive_diameter.exe
-	./bench/naive_diameter.exe data/10k_random_walk_2d-0.02.csv bench/naive_diameter_random_walk-0.02.txt
+bench/bce_monotonicity_1k_random_walk-0.02.txt: bench/bce_monotonicity.exe data/1k_random_walk_2d-0.02.csv
+	./$^ $@
 
-data/10k_gon-0.55.csv:
-	python datagen/regular_ngon.py --radius 0.55 --n 10000 -o data/10k_gon-0.55.csv
+bench/naive_monotonicity_1k_random_walk-0.02.txt: bench/naive_monotonicity.exe data/1k_random_walk_2d-0.02.csv
+	./$^ $@
 
-data/10k_random_walk_2d-0.02.csv:
-	python datagen/random_walk_2d.py -o data/10k_random_walk_2d-0.02.csv --step-size 0.02
+bench/compare_monotonicity.csv: bench/compare_monotonicity.exe data/10k_gon-0.55.csv data/10k_random_walk_2d-0.02.csv
+	./$^
+
+bench/bce_monotonicity_10k_gon-0.55.txt: bench/bce_monotonicity.exe data/10k_gon-0.55.csv
+	./$^ $@
+
+bench/naive_diameter_random_walk-0.02.txt: bench/naive_diameter.exe data/10k_random_walk_2d-0.02.csv
+	./$^ $@
+
+data/%k_gon-0.55.csv:
+	python datagen/regular_ngon.py --radius 0.55 --n $*000 -o $@
+
+data/%k_random_walk_2d-0.02.csv:
+	python datagen/random_walk_2d.py -o $@ --step-size 0.02 --num-points $*000
 
 %.exe:
 	${CC} ${CCFLAGS} -o $@ $*.cpp ${cpp_files}

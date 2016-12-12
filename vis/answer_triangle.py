@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 def parse_args(*argument_array):
   parser = argparse.ArgumentParser()
-  parser.add_argument('answer_file')
+  parser.add_argument('answer_files', nargs='+')
   parser.add_argument('--png', help='save plot to the given file')
   args = parser.parse_args(*argument_array)
   return args
@@ -17,14 +17,16 @@ def parse_args(*argument_array):
 
 def main(args):
   answer_indices = []
-  with open(args.answer_file) as infile:
-    answer_indices = [int(line) for line in infile]
+  for filename in args.answer_files:
+    with open(filename) as infile:
+      answer_indices = [int(line) for line in infile]
 
-  plt.gca().invert_yaxis()
-  y = list(range(len(answer_indices)))
-  plt.step(answer_indices, y, label='answer')
+    y = list(range(len(answer_indices)))
+    plt.step(answer_indices, y, label=filename)
+
   plt.plot(y, y, label='diagonal')
-  plt.legend()
+  plt.gca().invert_yaxis()
+  plt.legend(loc='lower left')
   if args.png:
     plt.savefig(args.png, dpi=320)
   else:
