@@ -10,25 +10,21 @@ std::vector<int> chan_prat_diameter_2d(std::vector<Point> &points) {
     RangeTree *node;
     for (int i = 0; i < N; i++) {
         node = rt.locate_tree(i);
-        printf("start == %d ", node->getIndex());
+        // printf("start == %d ", node->getIndex());
         bool going_up = true;
         // Up phase
         while (going_up && node->is_root() == false) {
             bool from_left = node->is_left_child();
             node = node->get_parent();
-            printf("-> %d ", node->getIndex());
             if (from_left) {
                 bool found_far_point = node->right_child()->is_point_outside_intersection(points[i]);
-                printf("\nintersecting %d\n", node->right_child()->is_point_outside_intersection(points[i]));
                 if (found_far_point) {
                     going_up = false;
                     break;
                 }
             }
         }
-        printf("\n");
-        if (going_up) { // No need to go down.
-            printf("[%d] went too far...\n", i);
+        if (going_up) {
             answer[i] = N - 1;
             continue;
         }
@@ -46,6 +42,10 @@ std::vector<int> chan_prat_diameter_2d(std::vector<Point> &points) {
                 node = node->right_child();
             }
         }
+    }
+    for (int i = N - 2; i >= 0; i--) {
+        // printf("%d, answer = %d, right_answer = %d\n", i, answer[i], answer[i+1]);
+        answer[i] = std::min(answer[i+1], answer[i]);
     }
     return answer;
 }

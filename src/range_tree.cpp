@@ -58,10 +58,6 @@ bool RangeTree::is_root() {
 }
 
 bool RangeTree::is_point_outside_intersection(Point &vector) {
-    // printf("point: %f %f\n", vector[0], vector[1]);
-    // for (auto v : polyArc.getVertices()) {
-    //     printf("%f %f %f %f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
-    // }
     return !polyArc.contains(Point2D{vector[0], vector[1]});
 }
 
