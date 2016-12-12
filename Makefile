@@ -18,9 +18,19 @@ clean:
 	rm bench/*.exe bench/*.txt bench/*.csv
 .PHONY: clean
 
+
+report.pdf: plots/diameter_random_walk.png plots/monotonicity_moving_gaussian.png
+	latexrun report/6.854-final_report.arsen.hayk.tex
+	mv 6.854-final_report.arsen.hayk.pdf $@
+	open $@
+.PHONY: report.pdf
+
 ## Report png's
 plots/diameter_random_walk.png: bench/chan_prat_diameter_random_walk-0.02.txt
-	python vis/pretty_answer_triangle.py $^ --png $@ --label "Chan, Prat" --title "Diameter, Random Walk"
+	python vis/pretty_answer_triangle.py $^ --png $@ --label "Chan, Prat" --title "diameter: Random Walk"
+
+plots/monotonicity_moving_gaussian.png: bench/bce_monotonicity_moving_gaussian.txt
+	python vis/pretty_answer_triangle.py $^ --png $@ --label "Bokal, Cabello, Eppstein" --title "Monotonicity: moving point with Gaussian Noise."
 
 ## Debug png's
 
@@ -92,6 +102,9 @@ bench/compare_diameter.csv: bench/compare_diameter.exe data/10k_gon-0.55.csv dat
 bench/bce_monotonicity_10k_gon-0.55.txt: bench/bce_monotonicity.exe data/10k_gon-0.55.csv
 	./$^ $@
 
+bench/bce_monotonicity_moving_gaussian.txt: bench/bce_monotonicity.exe data/10000_gaussian_noise-0.05.csv
+	./$^ $@
+
 bench/naive_diameter_random_walk-0.02.txt: bench/naive_diameter.exe data/10k_random_walk_2d-0.02.csv
 	./$^ $@
 
@@ -137,6 +150,9 @@ rebuildrun: clean ${BUILD_DIR}/main data/gaussian_$(N).csv
 	@echo
 	./${BUILD_DIR}/main data/gaussian_$(N).csv
 .PHONY: rebuildrun
+
+data/%_gaussian_noise-0.05.csv:
+	python datagen/moving_gaussian.py --num-points $* -o $@ --speed 1 --covariance 0.05 0 0 1
 
 data/gaussian_%.csv:
 	python datagen/moving_gaussian.py --num-points $* -o data/gaussian_$*.csv --speed 1 --covariance 0.2 0 0 1

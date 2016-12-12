@@ -1,6 +1,7 @@
 # Editor files
 .idea/
 *.sw[op]
+latex.out/
 
 # build
 build/
