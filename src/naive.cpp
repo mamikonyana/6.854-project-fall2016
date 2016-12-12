@@ -15,8 +15,9 @@ std::vector<int> naive_diameter(std::vector<Point> &points) {
                j++) {}
         k[i] = j - 1;
     }
-    for (int i = 0; i < size; i++) {
-        j_star[i] = *std::min_element(&k[i], &k[k[i]]);
+    j_star[size - 1] = k[size - 1];
+    for (int i = size - 2; i >= 0; i--) {
+        j_star[i] = std::min(j_star[i+1], k[i]);
     }
     return j_star;
 }
