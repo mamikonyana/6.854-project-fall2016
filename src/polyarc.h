@@ -66,5 +66,7 @@ bool circle_contains(Point2D center, Point2D pt);
 
 std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::vector< Vertex >& upper2, int dir);
 
+std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(std::vector< Vertex > upper, std::vector< Vertex > lower);
+
 #endif // POLYARC_H
 

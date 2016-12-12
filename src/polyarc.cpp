@@ -68,7 +68,13 @@ PolyArc PolyArc::intersect(PolyArc other) {
     std::vector< Vertex > upperIntersect = intersect_envelopes(upper, other.upper, -1);
     std::vector< Vertex > lowerIntersect = intersect_envelopes(lower, other.lower,  1);
 
-    return PolyArc();
+    auto upperLowerIntersect = intersect_upper_lower(upperIntersect, lowerIntersect);
+
+    PolyArc res = PolyArc();
+    res.upper = upperLowerIntersect.first;
+    res.lower = upperLowerIntersect.second;
+
+    return res;
 }
 
 std::vector<Vertex> PolyArc::getVertices() {
@@ -219,7 +225,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
     double lastX;
 
     while (front[0] < envelopes[0].size() && front[1] < envelopes[1].size()) {
-        printf("\n==============\n");
+        // printf("\n==============\n");
         if (envelopes[0][front[0]].location == envelopes[1][front[1]].location) {
             lastX = envelopes[0][front[0]].location.x;
             if (front[0] == envelopes[0].size() - 1 || front[1] == envelopes[1].size()) {
@@ -245,7 +251,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
 
         lastX = curr.x;
 
-        printf("front = %d %d, s = %d\n", front[0], front[1], s);
+        // printf("front = %d %d, s = %d\n", front[0], front[1], s);
         // TODO x1 == x2
         if (front[1 - s] == 0) {
             front[s]++;
@@ -256,7 +262,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
         
         Point2D other = {curr.x, ac.y - dir * sqrt(1 - (curr.x - ac.x) * (curr.x - ac.x))};
 
-        printf("curr = (%.2f %.2f); other = (%.2f, %.2f)\n", curr.x, curr.y, other.x, other.y);
+        // printf("curr = (%.2f %.2f); other = (%.2f, %.2f)\n", curr.x, curr.y, other.x, other.y);
 
         Vertex new_vertex;
         int new_lower = -1;
@@ -278,8 +284,8 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
             }
         }
 
-        printf("lower %d, new_lower = %d\n", lower, new_lower);
-        printf("new_vertex %.2f %.2f\n", new_vertex.location.x, new_vertex.location.y);
+        // printf("lower %d, new_lower = %d\n", lower, new_lower);
+        // printf("new_vertex %.2f %.2f\n", new_vertex.location.x, new_vertex.location.y);
 
         if (lower != -1 && new_lower != lower) {
             std::pair< Point2D, bool > new_intersection;
@@ -301,7 +307,7 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
                                                   envelopes[1 - s][front[1 - s] - 1].location);
             }
             assert(new_intersection.second);
-            printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
+            // printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
 
             auto& prev = res[res.size() - 1];
             if (prev.circle_index == envelopes[new_lower][front[new_lower] - 1].circle_index) {
@@ -332,6 +338,113 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
         auto& ac = envelopes[lower][front[lower] - 1].arch_center;
         double lastY = ac.y - dir * sqrt(1 - (lastX - ac.x) * (lastX - ac.x));
         res.push_back(Vertex{Point2D{lastX, lastY}, ac, envelopes[lower][front[lower] - 1].circle_index});
+    }
+
+    return res;
+}
+
+std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(std::vector< Vertex > upper, std::vector< Vertex > lower) {
+    auto res = std::make_pair(std::vector< Vertex >(), std::vector< Vertex >());
+
+    int state = 0;
+    int u = 0, l = 0;
+
+    while (state < 2 && u < upper.size() && l < lower.size()) {
+        if (upper[u].location == lower[l].location) {
+            res.first.push_back(upper[u]);
+            res.second.push_back(lower[l]);
+            state++;
+            u++;
+            l++;
+            continue;
+        }
+
+        std::pair< Point2D, bool > new_intersection;
+        if (u > 0 && l > 0) {
+            new_intersection = intersect_arcs(upper[u - 1].arch_center,
+                                              upper[u - 1].location,
+                                              upper[u].location,
+
+                                              lower[l - 1].arch_center,
+                                              lower[l].location,
+                                              lower[l - 1].location);
+        }
+
+        if (fequal(upper[u].location.x, lower[l].location.x)) {
+            assert(u > 0 && l > 0);
+            if ((state == 0 && upper[u].location.y > lower[l].location.y) ||
+                (state == 1 && upper[u].location.y < lower[l].location.y)) {
+                assert(new_intersection.second);
+
+                res.first.push_back (Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
+                res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+                state++;
+            }
+            if (state == 1) {
+                res.first.push_back(upper[u]);
+                res.second.push_back(lower[l]);
+            }
+            u++;
+            l++;
+        } else if (upper[u].location.x < lower[l].location.x) {
+            auto&  ac = lower[l - 1].arch_center;
+            double& x = upper[u].location.x;
+
+            double y = ac.y - sqrt(1 - (ac.x - x) * (ac.x - x));
+
+            if (fequal(y, upper[u].location.y)) {
+                res.first.push_back (upper[u]);
+                res.second.push_back(Vertex{upper[u].location, lower[l - 1].arch_center, lower[l - 1].circle_index});
+                state ++;
+            } else if (y < upper[u].location.y) {
+                if (state == 0) {
+                    assert(new_intersection.second);
+                    res.first.push_back (Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
+                    res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+
+                    state++;
+                }
+                res.first.push_back(upper[u]);
+            } else {
+                if (state == 1) {
+                    assert(new_intersection.second);
+                    res.first.push_back (Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
+                    res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+
+                    state++;
+                }
+            }
+            u++;
+        } else { // upper[u].location. > lower[l].location.x  ######## should be symmetric
+            auto&  ac = upper[u - 1].arch_center;
+            double& x = lower[l].location.x;
+
+            double y = ac.y + sqrt(1 - (ac.x - x) * (ac.x - x));
+
+            if (fequal(y, lower[l].location.y)) {
+                res.first.push_back (Vertex{lower[l].location, upper[u - 1].arch_center, upper[l - 1].circle_index});
+                res.second.push_back(lower[l]);
+            } else if (y > lower[u].location.y) {
+                if (state == 0) {
+                    assert(new_intersection.second);
+                    res.first.push_back(Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
+                    res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+
+                    state++;
+                }
+                res.second.push_back(lower[l]);
+            } else {
+                if (state == 1) {
+                    assert(new_intersection.second);
+                    res.first.push_back (Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
+                    res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+
+                    state++;
+                }
+            }
+
+            l++;
+        }
     }
 
     return res;

@@ -292,6 +292,13 @@ void test_intersect_envelopes_degenerate() {
     printf("PASS: test_intersect_envelopes_degenerate\n\n");
 }
 
+void test_intersect_upper_lower_basic() {
+    Vertex v1 = {Point2D{0, 0}, Point2D{1, 0}, 0};
+    Vertex v2 = {Point2D{1, 0}, Point2D{2, 0}, 1};
+    Vertex v3 = {Point2D{2, 0}, Point2D{1, 0}, 0};
+    Vertex v4 = {Point2D{3, 0}, Point2D{2, 0}, 1};
+}
+
 int main() {
     // test_contains_manual();
     // test_contains_triangular();
