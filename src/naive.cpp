@@ -7,14 +7,18 @@
 
 std::vector< int > naive_diameter(std::vector< Point >& points) {
     int size = points.size();
-    std::vector< int > answer(size);
+    std::vector< int > j_star(size);
+    std::vector< int > k(size); // minimum violator for i'th circle, minus 1
     for (int i = 0; i < size; i++) {
         int j = i + 1;
         for (; j < size && difference_l2norm(points[i], points[j]) < 1.0;
                j++) {}
-        answer[i] = j - 1;
+        k[i] = j - 1;
     }
-    return answer;
+    for (int i = 0; i < size; i++) {
+        j_star[i] = *std::min_element(&k[i], &k[k[i]]);
+    }
+    return j_star;
 }
 
 std::vector< int > naive_monotonicity_2d(std::vector< Point >& points) {
