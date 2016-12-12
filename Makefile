@@ -21,6 +21,9 @@ clean:
 plots/compare_monotonicity.png: bench/compare_monotonicity.csv
 	cat $^
 
+plots/compare_diameter.png: bench/compare_diameter.csv
+	cat $^
+
 plots/monotonicity_1k_random_walk_0.02.png: bench/bce_monotonicity_1k_random_walk-0.02.txt bench/naive_monotonicity_1k_random_walk-0.02.txt
 	python vis/answer_triangle.py $^
 
@@ -59,6 +62,9 @@ bench/naive_monotonicity_1k_random_walk-0.02.txt: bench/naive_monotonicity.exe d
 	./$^ $@
 
 bench/compare_monotonicity.csv: bench/compare_monotonicity.exe data/10k_gon-0.55.csv data/10k_random_walk_2d-0.02.csv
+	./$^
+
+bench/compare_diameter.csv: bench/compare_diameter.exe data/10k_gon-0.55.csv data/10k_random_walk_2d-0.02.csv
 	./$^
 
 bench/bce_monotonicity_10k_gon-0.55.txt: bench/bce_monotonicity.exe data/10k_gon-0.55.csv
