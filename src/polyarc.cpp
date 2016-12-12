@@ -67,19 +67,19 @@ PolyArc PolyArc::intersect(PolyArc other) {
 
     std::vector< Vertex > upperIntersect = intersect_envelopes(upper, other.upper, -1);
 
-    // printf("Upper vertices\n");
-    // for (auto& v : upperIntersect) {
-    //     print_vertex(v);
-    // }
-    // printf("\n");
+    printf("Upper vertices\n");
+    for (auto& v : upperIntersect) {
+        print_vertex(v);
+    }
+    printf("\n");
 
     std::vector< Vertex > lowerIntersect = intersect_envelopes(lower, other.lower,  1);
 
-    // printf("Lower vertices\n");
-    // for (auto& v : lowerIntersect) {
-    //     print_vertex(v);
-    // }
-    // printf("\n");
+    printf("Lower vertices\n");
+    for (auto& v : lowerIntersect) {
+        print_vertex(v);
+    }
+    printf("\n");
 
     auto upperLowerIntersect = intersect_upper_lower(upperIntersect, lowerIntersect);
 
@@ -232,7 +232,6 @@ std::pair< Point2D, bool > intersect_arcs(Point2D c1, Point2D a1, Point2D b1, Po
     bool found = false;
     for (auto pt : arc_circle) {
         if (on_arc(c1, a1, b1, pt)) {
-            assert(!found);
             found = true;
             res = pt;
         }

@@ -298,25 +298,45 @@ void test_intersect_envelopes_degenerate() {
     printf("PASS: test_intersect_envelopes_degenerate\n\n");
 }
 
-void test_intersect_upper_lower_basic() {
-    Vertex v1 = {Point2D{0, 0}, Point2D{1, 0}, 0};
-    Vertex v2 = {Point2D{1, 0}, Point2D{2, 0}, 1};
-    Vertex v3 = {Point2D{2, 0}, Point2D{1, 0}, 0};
-    Vertex v4 = {Point2D{3, 0}, Point2D{2, 0}, 1};
+void test_notfoundassert() {
+    printf("START: notfoundassert\n");
+    std::vector<Point> data = load_csv_data("data/notfoundassert.csv");
+
+    PolyArc pa0 = PolyArc(Point2D{data[0][0], data[0][1]}, 0);
+
+    PolyArc pa1 = PolyArc(Point2D{data[1][0], data[1][1]}, 1);
+    PolyArc pa2 = PolyArc(Point2D{data[2][0], data[2][1]}, 2);
+    PolyArc pa3 = PolyArc(Point2D{data[3][0], data[3][1]}, 3);
+
+    // printf("single polyarcs - done\n");
+
+    PolyArc pa01 = pa0.intersect(pa1);
+
+    // printf("pa01 - done\n");
+
+    PolyArc pa23 = pa2.intersect(pa3);
+
+    // printf("pa23 - done\n");
+
+    PolyArc pa0123 = pa01.intersect(pa23);
+
+    printf("PASS: notfoundassert\n");
 }
 
+
 int main() {
-    test_contains_manual();
-    test_contains_triangular();
-    test_direction();
-    test_intersect_circles();
-    test_intersect_circles_3_normal();
-    test_intersect_circles_3_normal_non_pairwise();
-    test_intersect_circles_3_degenerate();
-    test_intersect_envelopes_basic();
-    test_intersect_envelopes_below();
-    test_intersect_envelopes_empty();
-    test_intersect_envelopes_degenerate();
+    // test_contains_manual();
+    // test_contains_triangular();
+    // test_direction();
+    // test_intersect_circles();
+    // test_intersect_circles_3_normal();
+    // test_intersect_circles_3_normal_non_pairwise();
+    // test_intersect_circles_3_degenerate();
+    // test_intersect_envelopes_basic();
+    // test_intersect_envelopes_below();
+    // test_intersect_envelopes_empty();
+    // test_intersect_envelopes_degenerate();
+    test_notfoundassert();
     return 0;
 }
 
