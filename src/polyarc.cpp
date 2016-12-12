@@ -7,9 +7,9 @@
 PolyArc::PolyArc() {
 }
 
-PolyArc::PolyArc(Point2D center) {
-    Vertex left = {Point2D{center.x - 1, center.y}, center, -1};
-    Vertex right = {Point2D{center.x + 1, center.y}, center, -1};
+PolyArc::PolyArc(Point2D center, int circle_index) {
+    Vertex left = {Point2D{center.x - 1, center.y}, center, circle_index};
+    Vertex right = {Point2D{center.x + 1, center.y}, center, circle_index};
     upper.push_back(left);
     upper.push_back(right);
     lower.push_back(left);
@@ -70,17 +70,6 @@ PolyArc PolyArc::intersect(PolyArc other) {
 
     return PolyArc();
 }
-
-// void PolyArc::reorder() {
-//     int leftmost = 0;
-//     for (int i = 1; i < vertices.size(); ++i) {
-//         if (vertices[i].location.x < vertices[leftmost].location.x) {
-//             leftmost = i;
-//         }
-//     }
-// 
-//     std::rotate(vertices.begin(), vertices.begin() + leftmost, vertices.end());
-// }
 
 std::vector<Vertex> PolyArc::getVertices() {
     if (isEmpty()) {
@@ -227,24 +216,47 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
     std::vector< int > front(2, 0);
 
     int lower = -1;
+    double lastX;
 
     while (front[0] < envelopes[0].size() && front[1] < envelopes[1].size()) {
-        // printf("\n==============\n");
-        int s = envelopes[0][front[0]].location.x < envelopes[1][front[1]].location.x ? 0 : 1;
+        printf("\n==============\n");
+        if (envelopes[0][front[0]].location == envelopes[1][front[1]].location) {
+            lastX = envelopes[0][front[0]].location.x;
+            if (front[0] == envelopes[0].size() - 1 || front[1] == envelopes[1].size()) {
+                lower = 0;
+                break;
+            }
+            if (direction(envelopes[0][front[0]].location,
+                          envelopes[0][front[0] + 1].location,
+                          envelopes[1][front[1] + 1].location) == dir) {
+                res.push_back(envelopes[1][front[1]]);
+                lower = 1;
+            } else {
+                res.push_back(envelopes[0][front[0]]);
+                lower = 0;
+            }
+            front[0]++;
+            front[1]++;
+            continue;
+        }
 
-        // printf("front = %d %d, s = %d\n", front[0], front[1], s);
-        if (front[s] == 0 && front[1 - s] == 0) {
+        int s = envelopes[0][front[0]].location.x < envelopes[1][front[1]].location.x ? 0 : 1;
+        Point2D curr = envelopes[s][front[s]].location;
+
+        lastX = curr.x;
+
+        printf("front = %d %d, s = %d\n", front[0], front[1], s);
+        // TODO x1 == x2
+        if (front[1 - s] == 0) {
             front[s]++;
             continue;
         }
 
-        Point2D curr = envelopes[s][front[s]].location;
         Point2D ac = envelopes[1 - s][front[1 - s] - 1].arch_center;
         
         Point2D other = {curr.x, ac.y - dir * sqrt(1 - (curr.x - ac.x) * (curr.x - ac.x))};
 
-        // printf("curr = (%.2f %.2f); other = (%.2f, %.2f)\n", curr.x, curr.y, other.x, other.y);
-        // TODO x1 == x2
+        printf("curr = (%.2f %.2f); other = (%.2f, %.2f)\n", curr.x, curr.y, other.x, other.y);
 
         Vertex new_vertex;
         int new_lower = -1;
@@ -266,7 +278,8 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
             }
         }
 
-        // printf("lower %d, new_lower = %d\n", lower, new_lower);
+        printf("lower %d, new_lower = %d\n", lower, new_lower);
+        printf("new_vertex %.2f %.2f\n", new_vertex.location.x, new_vertex.location.y);
 
         if (lower != -1 && new_lower != lower) {
             std::pair< Point2D, bool > new_intersection;
@@ -288,27 +301,37 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
                                                   envelopes[1 - s][front[1 - s] - 1].location);
             }
             assert(new_intersection.second);
-            // printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
+            printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
 
-//           auto& prev = *res.rbegin();
-//           if (prev.circle_index == envelopes[new_lower][front[new_lower] - 1].circle_index) {
-//               assert(prev.arch_center == envelopes[new_lower][front[new_lower] - 1].arch_center);
-//           } else {
+            auto& prev = res[res.size() - 1];
+            if (prev.circle_index == envelopes[new_lower][front[new_lower] - 1].circle_index) {
+                assert(prev.arch_center == envelopes[new_lower][front[new_lower] - 1].arch_center);
+            } else {
                 res.push_back(Vertex{ new_intersection.first,
                                       envelopes[new_lower][front[new_lower] - 1].arch_center,
                                       envelopes[new_lower][front[new_lower] - 1].circle_index });
-            //}
+            }
         }
 
-//        auto& prev = *res.rbegin();
-//        if (prev.circle_index == new_vertex.circle_index) {
-//            assert(prev.arch_center == new_vertex.arch_center);
-//        } else {
+        if (res.size() > 0) {
+            auto& prev = *res.rbegin();
+            if (prev.circle_index == new_vertex.circle_index) {
+                assert(prev.arch_center == new_vertex.arch_center);
+            } else {
+                res.push_back(new_vertex);
+            }
+        } else {
             res.push_back(new_vertex);
-        //}
+        }
 
         lower = new_lower;
         front[s]++;
+    }
+    if (lower != -1) {
+        auto new_vertex = envelopes[lower][front[lower] - 1];
+        auto& ac = envelopes[lower][front[lower] - 1].arch_center;
+        double lastY = ac.y - dir * sqrt(1 - (lastX - ac.x) * (lastX - ac.x));
+        res.push_back(Vertex{Point2D{lastX, lastY}, ac, envelopes[lower][front[lower] - 1].circle_index});
     }
 
     return res;

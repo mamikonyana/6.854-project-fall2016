@@ -53,9 +53,9 @@ void test_intersect_circles_3_normal() {
     printf("START: intersect_circles_3_normal\n");
 
     std::vector<Point> data = load_csv_data("data/triangle-radius0.55.csv");
-    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
-    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
-    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
+    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]}, 0);
+    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]}, 1);
+    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]}, 2);
 
     PolyArc pa12 = pa1.intersect(pa2);
     std::vector<Vertex> vertices;
@@ -84,9 +84,9 @@ void test_intersect_circles_3_normal_non_pairwise() {
     printf("START: intersect_circles_3_normal_non_pairwise\n");
 
     std::vector<Point> data = load_csv_data("data/3-circles-normal-non-pairwise.csv");
-    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
-    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
-    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
+    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]}, 0);
+    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]}, 1);
+    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]}, 2);
 
     PolyArc pa13 = pa1.intersect(pa3);
 
@@ -108,9 +108,9 @@ void test_intersect_circles_3_degenerate() {
     printf("START: intersect_circles_3_degenerate\n");
 
     std::vector<Point> data = load_csv_data("data/3-circles-degenerate.csv");
-    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
-    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
-    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
+    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]}, 0);
+    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]}, 1);
+    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]}, 2);
 
     PolyArc pa12 = pa1.intersect(pa2);
 
@@ -171,10 +171,10 @@ void test_contains_manual() {
 void test_contains_triangular() {
     std::vector<Point> data = load_csv_data("data/triangle-radius0.55.csv");
 
-    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]});
+    PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]}, 0);
 
-    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]});
-    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]});
+    PolyArc pa2 = PolyArc(Point2D{data[1][0], data[1][1]}, 1);
+    PolyArc pa3 = PolyArc(Point2D{data[2][0], data[2][1]}, 2);
 
     assert(pa1.contains(Point2D{0., 0.}));
     assert(pa1.contains(Point2D{0., 2}) == false);
@@ -195,9 +195,9 @@ void test_contains_triangular() {
 void test_intersect_envelopes_basic() {
     printf("START: test_intersect_envelopes_basic\n");
     Vertex v1 = {Point2D{0, 0}, Point2D{1, 0}, 0};
-    Vertex v2 = {Point2D{1, 0}, Point2D{2, 0}, 0};
+    Vertex v2 = {Point2D{1, 0}, Point2D{2, 0}, 1};
     Vertex v3 = {Point2D{2, 0}, Point2D{1, 0}, 0};
-    Vertex v4 = {Point2D{3, 0}, Point2D{2, 0}, 0};
+    Vertex v4 = {Point2D{3, 0}, Point2D{2, 0}, 1};
 
     auto upper1 = std::vector< Vertex >{v1, v3};
     auto upper2 = std::vector< Vertex >{v2, v4};
@@ -232,18 +232,64 @@ void test_intersect_envelopes_below() {
     Vertex v1 = {Point2D{1, 2}, Point2D{2, 2}, 0};
     Vertex v2 = {Point2D{3, 2}, Point2D{2, 2}, 0};
 
-    Vertex v3 = {Point2D{1.5, 1}, Point2D{2.5, 1}, 0};
-    Vertex v4 = {Point2D{3.5, 1}, Point2D{2.5, 1}, 0};
+    Vertex v3 = {Point2D{1.5, 1}, Point2D{2.5, 1}, 1};
+    Vertex v4 = {Point2D{3.5, 1}, Point2D{2.5, 1}, 1};
+
+    auto upper1 = std::vector< Vertex >{v1, v2};
+    auto upper2 = std::vector< Vertex >{v3, v4};
+
+    auto res = intersect_envelopes(upper1, upper2, -1);
+    // for (auto& v : res) {
+    //     printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
+    // }
+
+    assert(res.size() == 2);
+    assert(res[0].location == (Point2D{1.5, 1}));
+    assert(res[1].location == (Point2D{3, 1 + sqrt(3.0) / 2}));
+    printf("PASS: test_intersect_envelopes_below\n\n");
+}
+
+void test_intersect_envelopes_empty() {
+    printf("START: test_intersect_envelopes_empty\n");
+    Vertex v1 = {Point2D{0, 0}, Point2D{1, 0}, 0};
+    Vertex v2 = {Point2D{2, 0}, Point2D{1, 0}, 0};
+
+    Vertex v3 = {Point2D{3, 0}, Point2D{4, 0}, 1};
+    Vertex v4 = {Point2D{5, 0}, Point2D{4, 0}, 1};
 
     auto upper1 = std::vector< Vertex >{v1, v2};
     auto upper2 = std::vector< Vertex >{v3, v4};
 
     auto res = intersect_envelopes(upper1, upper2, -1);
 
-    assert(res.size() == 2);
-    assert(res[0].location == (Point2D{1.5, 1}));
-    assert(res[1].location == (Point2D{3, 1 + sqrt(3.0) / 2}));
-    printf("PASS: test_intersect_envelopes_below\n\n");
+    // for (auto& v : res) {
+    //     printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
+    // }
+
+    assert(res.size() == 0);
+    printf("PASS: test_intersect_envelopes_empty\n\n");
+}
+
+void test_intersect_envelopes_degenerate() {
+    printf("START: test_intersect_envelopes_degenerate\n");
+    Vertex v1 = {Point2D{0, 0}, Point2D{1, 0}, 0};
+    Vertex v2 = {Point2D{2, 0}, Point2D{1, 0}, 0};
+
+    Vertex v3 = {Point2D{2, 0}, Point2D{3, 0}, 1};
+    Vertex v4 = {Point2D{4, 0}, Point2D{3, 0}, 1};
+
+    auto upper1 = std::vector< Vertex >{v1, v2};
+    auto upper2 = std::vector< Vertex >{v3, v4};
+
+    auto res = intersect_envelopes(upper1, upper2, -1);
+
+    for (auto& v : res) {
+        printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
+    }
+
+    assert(res.size() == 1);
+    assert(res[0].location == (Point2D{2, 0}));
+    printf("PASS: test_intersect_envelopes_degenerate\n\n");
 }
 
 int main() {
@@ -256,6 +302,8 @@ int main() {
     // test_intersect_circles_3_degenerate();
     test_intersect_envelopes_basic();
     test_intersect_envelopes_below();
+    test_intersect_envelopes_empty();
+    test_intersect_envelopes_degenerate();
     return 0;
 }
 

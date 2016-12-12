@@ -10,7 +10,7 @@ RangeTree::RangeTree(std::vector<Point> &points, int first, int last, RangeTree 
     if (first == last) {
         this->left = NULL;
         this->right= NULL;
-        polyArc = PolyArc(Point2D{points[index][0], points[index][1]});
+        polyArc = PolyArc(Point2D{points[index][0], points[index][1]}, first);
         return;
     }
     this->left = new RangeTree(points, first, mid, this);

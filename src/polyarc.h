@@ -29,7 +29,7 @@ private:
 public:
     PolyArc();
 
-    PolyArc(Point2D center);
+    PolyArc(Point2D center, int circle_index);
 
     // Used for testing.
     PolyArc(std::vector<Vertex> upper, std::vector<Vertex> lower) {
