@@ -37,14 +37,16 @@ We've implemented
 
 Let $k^*(i) = \inf_{m \geq i} \{d(i, m) > 1\}$. \textbf{Claim} $j^*(i-1) = \min(j^*(i), k^*(i-1))$. Thus after we calculate $k^*(i)$ for all elements, we can calculate $j^*(i)$ in $O(n)$ time by looping over all indices in the reverse order.
 
-\subsection{Bokan et al Overview}
+\subsection{Bokal et al Overview}
 TODO: A page that deftly describes the algorithm we've implemented.
 
 \subsection{Chan, Prat Overview}
 TODO: A page that deftly describes the algorithm we've implemented.
 
 \section{Implementation Details}
-The novelty of the algorithm from Chan, Prat is how they combine 1D range tree, with secondary structure that stores circle intersections. But they leave a lot of implementation details. Most importantly they just claim that it's possible to implement a data structure that stores circle intersections such that, it can answer \textit{contains} queries in $\log n$ time and can be combined with another intersections data structure in linear time.
+In this section we discuss some implementation details of the Chan, Pratt algorithm for diameter query problem. We skip the details of the monotonicity query, because it was relatively simple.
+
+The novelty of the algorithm from Chan, Pratt is how they combine 1D range tree, with secondary structure that stores circle intersections. While the algorithm is elegant, its implementation is not. In particular, it is necessary to implement an intersection algorithm for arbitrary \textit{polyarcs}. A polyarc is a convex object, similar to a polygon, but instead of straight edges each side is an arc of a circle. The algorithm for the intersection of polyarcs is similar to that of polygons, however there are many more edge cases to consider.
 
 \section{Experimental Results}
 
@@ -95,11 +97,9 @@ Figure \ref{fig:diameter_comparison} will show results comparing runtimes of Nai
 \end{figure}
 
 \section{Conclusion}
-It was really challanging to do an implementation project in computational geometry, since sentence takes 100+ lines of code to implement.
+It was really challanging to do an implementation project in computational geometry, some sentences in the papers take 100+ lines of code to implement. Thus, for small datasets, added complexity is not worth the speedup gained by the algorithm.
 
-Sometimes added complexity is not worth the speedup gained by the algorithm.
-
-This was a great project otherwise, we've implemented couple of algorithms that we have seen during the lecture - sweep line, range tree. Also couple that we hadn't found in Bokal et al and Chan, Prat.
+This was a great project otherwise, we've implemented couple of algorithms that we have seen during the lecture - sweep line, range tree, intersection of convex polygons using envelopes. Also couple that we had not found in Bokal et al and Chan, Prat.
 
 \bibliographystyle{unsrt}
 \bibliography{papers}
