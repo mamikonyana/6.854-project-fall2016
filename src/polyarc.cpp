@@ -67,19 +67,19 @@ PolyArc PolyArc::intersect(PolyArc other) {
 
     std::vector< Vertex > upperIntersect = intersect_envelopes(upper, other.upper, -1);
 
-    printf("Upper vertices\n");
-    for (auto& v : upperIntersect) {
-        print_vertex(v);
-    }
-    printf("\n");
+    // printf("Upper vertices\n");
+    // for (auto& v : upperIntersect) {
+    //     print_vertex(v);
+    // }
+    // printf("\n");
 
     std::vector< Vertex > lowerIntersect = intersect_envelopes(lower, other.lower,  1);
 
-    printf("Lower vertices\n");
-    for (auto& v : lowerIntersect) {
-        print_vertex(v);
-    }
-    printf("\n");
+    // printf("Lower vertices\n");
+    // for (auto& v : lowerIntersect) {
+    //     print_vertex(v);
+    // }
+    // printf("\n");
 
     auto upperLowerIntersect = intersect_upper_lower(upperIntersect, lowerIntersect);
 
@@ -228,18 +228,17 @@ std::vector< Point2D > intersect_circle_arc(Point2D center, Point2D arc_center, 
     return res;
 }
 
-std::pair< Point2D, bool > intersect_arcs(Point2D c1, Point2D a1, Point2D b1, Point2D c2, Point2D a2, Point2D b2) {
+std::vector< Point2D > intersect_arcs(Point2D c1, Point2D a1, Point2D b1, Point2D c2, Point2D a2, Point2D b2) {
     // assumes arcs are given in clockwise order
     auto arc_circle = intersect_circle_arc(c1, c2, a2, b2);
-    Point2D res;
-    bool found = false;
+
+    std::vector< Point2D > res;
     for (auto pt : arc_circle) {
         if (on_arc(c1, a1, b1, pt)) {
-            found = true;
-            res = pt;
+            res.push_back(pt);
         }
     }
-    return std::make_pair(res, found);
+    return res;
 }
 
 std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::vector< Vertex >& upper2, int dir) {
@@ -315,7 +314,8 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
         // printf("new_vertex %.2f %.2f\n", new_vertex.location.x, new_vertex.location.y);
 
         if (lower != -1 && new_lower != lower) {
-            std::pair< Point2D, bool > new_intersection;
+            // std::pair< Point2D, bool > new_intersection;
+            std::vector< Point2D > new_intersection;
             if (dir == -1) {
                 new_intersection = intersect_arcs(envelopes[s][front[s] - 1].arch_center,
                                                   envelopes[s][front[s] - 1].location,
@@ -333,14 +333,14 @@ std::vector< Vertex > intersect_envelopes(std::vector< Vertex >& upper1, std::ve
                                                   envelopes[1 - s][front[1 - s]].location,
                                                   envelopes[1 - s][front[1 - s] - 1].location);
             }
-            assert(new_intersection.second);
+            assert(new_intersection.size() == 1);
             // printf("new_intersection: (%.2f, %.2f)\n", new_intersection.first.x, new_intersection.first.y);
 
             auto& prev = res[res.size() - 1];
             if (prev.circle_index == envelopes[new_lower][front[new_lower] - 1].circle_index) {
                 assert(prev.arch_center == envelopes[new_lower][front[new_lower] - 1].arch_center);
             } else {
-                res.push_back(Vertex{ new_intersection.first,
+                res.push_back(Vertex{ new_intersection[0],
                                       envelopes[new_lower][front[new_lower] - 1].arch_center,
                                       envelopes[new_lower][front[new_lower] - 1].circle_index });
             }
@@ -390,7 +390,8 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
             continue;
         }
 
-        std::pair< Point2D, bool > new_intersection;
+        // std::pair< Point2D, bool > new_intersection;
+        std::vector< Point2D > new_intersection;
         if (u > 0 && l > 0) {
             // printf("new_intersection - start\n");
             // printf("circles %d %d\n", upper[u - 1].circle_index, lower[l - 1].circle_index);
@@ -402,6 +403,25 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
                                                   lower[l - 1].arch_center,
                                                   lower[l].location,
                                                   lower[l - 1].location);
+
+                if (intersect_circles(upper[u - 1].arch_center, lower[l - 1].arch_center).size() == 1) {
+                    new_intersection.push_back(new_intersection[0]);
+                }
+
+                if (new_intersection.size() == 2) {
+                    if (new_intersection[0] == new_intersection[1]) {
+                        return std::make_pair(std::vector< Vertex >{Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index}},
+                                              std::vector< Vertex >{Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index}});
+                    }
+                    if (new_intersection[0].x > new_intersection[1].x) {
+                        std::swap(new_intersection[0], new_intersection[1]);
+                    }
+                    return std::make_pair(std::vector< Vertex >{Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index},
+                                                           Vertex{new_intersection[1], upper[u - 1].arch_center, upper[u - 1].circle_index}},
+                                          std::vector< Vertex >{Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index},
+                                                           Vertex{new_intersection[1], lower[l - 1].arch_center, lower[l - 1].circle_index}});
+
+                }
             }
             // printf("new_intersection %d: %.2f %.2f\n", new_intersection.second, new_intersection.first.x, new_intersection.first.y);
         }
@@ -409,10 +429,10 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
         if (fequal(upper[u].location.x, lower[l].location.x)) {
             if ((state == 0 && upper[u].location.y > lower[l].location.y) ||
                 (state == 1 && upper[u].location.y < lower[l].location.y)) {
-                assert(new_intersection.second);
+                assert(new_intersection.size() == 1);
 
-                res.first.push_back (Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
-                res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+                res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
+                res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
                 state++;
             }
             if (state == 1) {
@@ -433,24 +453,24 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
                 state ++;
             } else if (y < upper[u].location.y) {
                 if (state == 0) {
-                    assert(new_intersection.second);
-                    res.first.push_back (Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
-                    res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+                    assert(new_intersection.size() == 1);
+                    res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
+                    res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
 
                     state++;
                 }
                 res.first.push_back(upper[u]);
             } else {
                 if (state == 1) {
-                    assert(new_intersection.second);
-                    res.first.push_back (Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
-                    res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+                    assert(new_intersection.size() == 1);
+                    res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
+                    res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
 
                     state++;
                 }
             }
             u++;
-        } else { // upper[u].location. > lower[l].location.x  ######## should be symmetric
+        } else { // upper[u].location.x > lower[l].location.x  ######## should be symmetric
             auto&  ac = upper[u - 1].arch_center;
             double& x = lower[l].location.x;
 
@@ -461,18 +481,18 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
                 res.second.push_back(lower[l]);
             } else if (y > lower[u].location.y) {
                 if (state == 0) {
-                    assert(new_intersection.second);
-                    res.first.push_back(Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
-                    res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+                    assert(new_intersection.size() == 1);
+                    res.first.push_back(Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
+                    res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
 
                     state++;
                 }
                 res.second.push_back(lower[l]);
             } else {
                 if (state == 1) {
-                    assert(new_intersection.second);
-                    res.first.push_back (Vertex{new_intersection.first, upper[u - 1].arch_center, upper[u - 1].circle_index});
-                    res.second.push_back(Vertex{new_intersection.first, lower[l - 1].arch_center, lower[l - 1].circle_index});
+                    assert(new_intersection.size() == 1);
+                    res.first.push_back (Vertex{new_intersection[0], upper[u - 1].arch_center, upper[u - 1].circle_index});
+                    res.second.push_back(Vertex{new_intersection[0], lower[l - 1].arch_center, lower[l - 1].circle_index});
 
                     state++;
                 }

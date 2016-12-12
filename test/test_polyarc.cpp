@@ -298,12 +298,61 @@ void test_intersect_envelopes_degenerate() {
     printf("PASS: test_intersect_envelopes_degenerate\n\n");
 }
 
+void test_intersect_lower_upper_no_inside_points() {
+    printf("START: test_intersect_lower_upper_no_inside_points\n");
+
+    Vertex v1 = {Point2D{1, 0}, Point2D{2, 0}, 0};
+    Vertex v2 = {Point2D{3, 0}, Point2D{2, 0}, 0};
+
+    Vertex v3 = {Point2D{1, 1.5}, Point2D{2, 1.5}, 1};
+    Vertex v4 = {Point2D{3, 1.5}, Point2D{2, 1.5}, 1};
+
+    auto upper = std::vector< Vertex >{v1, v2};
+    auto lower = std::vector< Vertex >{v3, v4};
+
+    auto res = intersect_upper_lower(upper, lower);
+
+    assert(res.first.size() == 2);
+    assert(res.second.size() == 2);
+    assert(res.first[0].location == (Point2D{1.338562172, 0.75000000}));
+    assert(res.first[1].location == (Point2D{2.661437828, 0.75000000}));
+
+    assert(res.second[0].location == (Point2D{1.338562172, 0.75000000}));
+    assert(res.second[1].location == (Point2D{2.661437828, 0.75000000}));
+
+    printf("PASS: test_intersect_lower_upper_no_inside_points\n\n");
+}
+
+void test_intersect_lower_upper_degenerate() {
+    printf("START: test_intersect_lower_upper_degenerate\n");
+
+    Vertex v1 = {Point2D{1, 0}, Point2D{2, 0}, 0};
+    Vertex v2 = {Point2D{3, 0}, Point2D{2, 0}, 0};
+
+    Vertex v3 = {Point2D{1, 2}, Point2D{2, 2}, 1};
+    Vertex v4 = {Point2D{3, 2}, Point2D{2, 2}, 1};
+
+    auto upper = std::vector< Vertex >{v1, v2};
+    auto lower = std::vector< Vertex >{v3, v4};
+
+    auto res = intersect_upper_lower(upper, lower);
+
+    // printf("%lu\n", res.first.size());
+    // for (auto& v : res.first) {
+    //     printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
+    // }
+
+    assert(res.first.size() == 1);
+    assert(res.first[0].location == (Point2D{2, 1}));
+
+    printf("PASS: test_intersect_lower_upper_degenerate\n\n");
+}
+
 void test_notfoundassert() {
     printf("START: notfoundassert\n");
     std::vector<Point> data = load_csv_data("data/notfoundassert.csv");
 
     PolyArc pa0 = PolyArc(Point2D{data[0][0], data[0][1]}, 0);
-
     PolyArc pa1 = PolyArc(Point2D{data[1][0], data[1][1]}, 1);
     PolyArc pa2 = PolyArc(Point2D{data[2][0], data[2][1]}, 2);
     PolyArc pa3 = PolyArc(Point2D{data[3][0], data[3][1]}, 3);
@@ -320,7 +369,7 @@ void test_notfoundassert() {
 
     PolyArc pa0123 = pa01.intersect(pa23);
 
-    printf("PASS: notfoundassert\n");
+    printf("PASS: notfoundassert\n\n");
 }
 
 void test_segfault() {
@@ -330,39 +379,41 @@ void test_segfault() {
     std::vector< PolyArc > single(7);
     for (int i = 0; i < data.size(); ++i) {
         single[i] = PolyArc(Point2D{data[i][0], data[i][1]}, i);
-        printf("done single %d\n", i);
+        // printf("done single %d\n", i);
     }
 
     std::vector< PolyArc > pairwise(4);
     for (int i = 0; i < 3; ++i) {
         pairwise[i] = single[2*i].intersect(single[2 * i + 1]);
-        printf("done pairwise %d - %d\n", 2 * i, 2 * i + 1);
+        // printf("done pairwise %d - %d\n", 2 * i, 2 * i + 1);
     }
     pairwise[3] = single[6];
 
     std::vector< PolyArc > quad(2);
     for (int i = 0; i < 2; ++i) {
         quad[i] = pairwise[2 * i].intersect(pairwise[2 * i + 1]);
-        printf("done quad %d - %d\n", 4 * i, std::min(4 * i + 3, 6));
+        // printf("done quad %d - %d\n", 4 * i, std::min(4 * i + 3, 6));
     }
 
     quad[0].intersect(quad[1]);
 
-    printf("PASS: segfaultt\n");
+    printf("PASS: segfaultt\n\n");
 }
 
 int main() {
-    // test_contains_manual();
-    // test_contains_triangular();
-    // test_direction();
-    // test_intersect_circles();
-    // test_intersect_circles_3_normal();
-    // test_intersect_circles_3_normal_non_pairwise();
-    // test_intersect_circles_3_degenerate();
-    // test_intersect_envelopes_basic();
-    // test_intersect_envelopes_below();
-    // test_intersect_envelopes_empty();
-    // test_intersect_envelopes_degenerate();
+    test_contains_manual();
+    test_contains_triangular();
+    test_direction();
+    test_intersect_circles();
+    test_intersect_circles_3_normal();
+    test_intersect_circles_3_normal_non_pairwise();
+    test_intersect_circles_3_degenerate();
+    test_intersect_envelopes_basic();
+    test_intersect_envelopes_below();
+    test_intersect_envelopes_empty();
+    test_intersect_envelopes_degenerate();
+    test_intersect_lower_upper_degenerate();
+    test_intersect_lower_upper_no_inside_points();
     test_notfoundassert();
     test_segfault();
     return 0;
