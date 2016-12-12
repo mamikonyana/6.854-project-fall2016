@@ -485,7 +485,7 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
 }
 
 void print_vertex(Vertex v, std::string s) {
-    printf("%s: %.2f %.2f %.2f %.2f %d\n", s.c_str(), v.location.x, v.location.y, v.arch_center.x, v.arch_center.y, v.circle_index);
+    printf("%s: %.9f %.9f %.9f %.9f %d\n", s.c_str(), v.location.x, v.location.y, v.arch_center.x, v.arch_center.y, v.circle_index);
 }
 
 void print_vertex(Vertex v) {
