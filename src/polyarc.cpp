@@ -350,7 +350,11 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
     int u = 0, l = 0;
 
     while (state < 2 && u < upper.size() && l < lower.size()) {
+        // printf("%d: %d %d\n", state, u, l);
+        // printf("upper: %.2f %.2f\n", upper[u].location.x, upper[u].location.y);
+        // printf("lower: %.2f %.2f\n", lower[l].location.x, lower[l].location.y);
         if (upper[u].location == lower[l].location) {
+            // printf("equal\n");
             res.first.push_back(upper[u]);
             res.second.push_back(lower[l]);
             state++;
@@ -361,13 +365,18 @@ std::pair< std::vector< Vertex >, std::vector< Vertex > > intersect_upper_lower(
 
         std::pair< Point2D, bool > new_intersection;
         if (u > 0 && l > 0) {
-            new_intersection = intersect_arcs(upper[u - 1].arch_center,
-                                              upper[u - 1].location,
-                                              upper[u].location,
+            // printf("new_intersection - start\n");
+            // printf("circles %d %d\n", upper[u - 1].circle_index, lower[l - 1].circle_index);
+            if (upper[u - 1].circle_index != lower[l - 1].circle_index) {
+                new_intersection = intersect_arcs(upper[u - 1].arch_center,
+                                                  upper[u - 1].location,
+                                                  upper[u].location,
 
-                                              lower[l - 1].arch_center,
-                                              lower[l].location,
-                                              lower[l - 1].location);
+                                                  lower[l - 1].arch_center,
+                                                  lower[l].location,
+                                                  lower[l - 1].location);
+            }
+            // printf("new_intersection %d: %.2f %.2f\n", new_intersection.second, new_intersection.first.x, new_intersection.first.y);
         }
 
         if (fequal(upper[u].location.x, lower[l].location.x)) {

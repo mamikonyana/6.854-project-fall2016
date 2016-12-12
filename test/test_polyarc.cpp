@@ -23,7 +23,7 @@ void test_direction() {
 
     assert(direction(o2, p2, q2) == 0);
 
-    printf("PASS: test_direction\n");
+    printf("PASS: test_direction\n\n");
 }
 
 void test_intersect_circles() {
@@ -138,6 +138,7 @@ void test_intersect_circles_3_degenerate() {
  * 10 circles on x axis, 0.5 apart from each other, starting at origin
  */
 void test_contains_manual() {
+    printf("START: test_contains_manual\n");
 
     double center_delta = 0.5;
     double offset = center_delta / 2;
@@ -169,6 +170,7 @@ void test_contains_manual() {
 }
 
 void test_contains_triangular() {
+    printf("START: test_contains_triangular\n");
     std::vector<Point> data = load_csv_data("data/triangle-radius0.55.csv");
 
     PolyArc pa1 = PolyArc(Point2D{data[0][0], data[0][1]}, 0);
@@ -180,14 +182,14 @@ void test_contains_triangular() {
     assert(pa1.contains(Point2D{0., 2}) == false);
     assert(pa1.contains(Point2D{0., -2}) == false);
 
-    // PolyArc pa12 = pa1.intersect(pa2);
-    // assert(pa12.contains(Point2D{0., 0.}));
-    // assert(pa12.contains(Point2D{1., 2.}) == false);
+    PolyArc pa12 = pa1.intersect(pa2);
+    assert(pa12.contains(Point2D{0., 0.}));
+    assert(pa12.contains(Point2D{1., 2.}) == false);
 
-    // PolyArc pa123 = pa12.intersect(pa3);
-    // assert(pa123.contains(Point2D{0.12, 0.12}));
-    // assert(pa123.contains(Point2D{-0.12, 0.2}));
-    // assert(pa12.contains(Point2D{1., 2.}) == false);
+    PolyArc pa123 = pa12.intersect(pa3);
+    assert(pa123.contains(Point2D{0.12, 0.12}));
+    assert(pa123.contains(Point2D{-0.12, 0.2}));
+    assert(pa12.contains(Point2D{1., 2.}) == false);
 
     printf("PASS: test_contains_triangular\n\n");
 }
@@ -283,9 +285,9 @@ void test_intersect_envelopes_degenerate() {
 
     auto res = intersect_envelopes(upper1, upper2, -1);
 
-    for (auto& v : res) {
-        printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
-    }
+    // for (auto& v : res) {
+    //     printf("%.2f %.2f %.2f %.2f\n", v.location.x, v.location.y, v.arch_center.x, v.arch_center.y);
+    // }
 
     assert(res.size() == 1);
     assert(res[0].location == (Point2D{2, 0}));
@@ -300,13 +302,13 @@ void test_intersect_upper_lower_basic() {
 }
 
 int main() {
-    // test_contains_manual();
-    // test_contains_triangular();
-    // test_direction();
-    // test_intersect_circles();
-    // test_intersect_circles_3_normal();
-    // test_intersect_circles_3_normal_non_pairwise();
-    // test_intersect_circles_3_degenerate();
+    test_contains_manual();
+    test_contains_triangular();
+    test_direction();
+    test_intersect_circles();
+    test_intersect_circles_3_normal();
+    test_intersect_circles_3_normal_non_pairwise();
+    test_intersect_circles_3_degenerate();
     test_intersect_envelopes_basic();
     test_intersect_envelopes_below();
     test_intersect_envelopes_empty();
