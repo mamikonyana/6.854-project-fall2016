@@ -37,8 +37,8 @@ void test_seven() {
 }
 
 int main() {
-    test_diam2d();
-    test_13gon_55();
+    // test_diam2d();
+    // test_13gon_55();
     test_seven();
     return 0;
 }
