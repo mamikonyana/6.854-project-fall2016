@@ -27,9 +27,19 @@ void test_13gon_55() {
     check_vectors(exp_answer, chan_prat_diameter_2d(points), "13gon_55 Chan, Prat");
 }
 
+void test_seven() {
+
+    std::vector<Point> points = load_csv_data("data/7_circles.csv");
+
+    std::vector<int> exp_answer = {3, 3, 6, 6, 6, 6, 6};
+    check_vectors(exp_answer, naive_diameter(points), "seven_circles naive");
+    check_vectors(exp_answer, chan_prat_diameter_2d(points), "seven_circles Chan, Prat");
+}
+
 int main() {
     test_diam2d();
     test_13gon_55();
+    test_seven();
     return 0;
 }
 

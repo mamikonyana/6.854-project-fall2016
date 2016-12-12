@@ -37,16 +37,19 @@ plots/diameter_random_walk_0.02.png: bench/naive_diameter_random_walk-0.02.txt
 	python vis/answer_triangle.py bench/naive_diameter_random_walk-0.02.txt --png plots/diameter_random_walk_0.02.png
 	open plots/diameter_random_walk_0.02.png
 
-debug_diameter: bench/naive_diameter_20_random_walk-0.3.txt bench/chan_prat_diameter_20_random_walk-0.3.txt
+clear_debug_diameter:
+	@rm bench/chan_prat_diameter_7_random_walk-0.3.txt data/7_random_walk_2d-0.3.csv
+
+debug_diameter: bench/naive_diameter_7_random_walk-0.3.txt bench/chan_prat_diameter_7_random_walk-0.3.txt
 	python vis/answer_triangle.py $^
 
 debug_monotonicity: bench/bce_monotonicity_20_random_walk-0.02.txt bench/naive_monotonicity_20_random_walk-0.02.txt
 	python vis/answer_triangle.py $^
 
-bench/naive_diameter_20_random_walk-0.3.txt: bench/naive_diameter.exe data/20_random_walk_2d-0.3.csv 
+bench/naive_diameter_7_random_walk-0.3.txt: bench/naive_diameter.exe data/7_random_walk_2d-0.3.csv 
 	./$^ $@
 
-bench/chan_prat_diameter_20_random_walk-0.3.txt: bench/chan_prat_diameter.exe data/20_random_walk_2d-0.3.csv
+bench/chan_prat_diameter_7_random_walk-0.3.txt: bench/chan_prat_diameter.exe data/7_random_walk_2d-0.3.csv
 	./$^ $@
 
 bench/bce_monotonicity_20_random_walk-0.02.txt: bench/bce_monotonicity.exe data/20_random_walk_2d-0.02.csv
