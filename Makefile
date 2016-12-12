@@ -17,21 +17,32 @@ clean:
 	rm -f ${BUILD_DIR}/main
 .PHONY: clean
 
-plots/random_walk_0.02.png: 
+plots/monotonicity_10k_gon-0.55.png: bench/bce_monotonicity_10k_gon-0.55.txt
 	mkdir -p plots
-	python vis/answer_triangle.py bench/naive_diameter-0.02.txt --png plots/random_walk_0.02.png
-	open plots/random_walk_0.02.png
+	python vis/answer_triangle.py bench/bce_monotonicity_10k_gon-0.55.txt --png plots/monotonicity_10k_gon-0.55.png
+	open plots/monotonicity_10k_gon-0.55.png
 
-bench/naive_diameter-0.02.txt: data/10k_random_walk_2d-0.02.csv bench/naive_diameter.exe
-	./bench/naive_diameter.exe data/10k_random_walk_2d-0.02.csv bench/naive_diameter-0.02.txt
+plots/diameter_random_walk_0.02.png: bench/naive_diameter_random_walk-0.02.txt
+	mkdir -p plots
+	python vis/answer_triangle.py bench/naive_diameter_random_walk-0.02.txt --png plots/diameter_random_walk_0.02.png
+	open plots/diameter_random_walk_0.02.png
+
+bench/bce_monotonicity_10k_gon-0.55.txt: data/10k_gon-0.55.csv bench/bce_monotonicity.exe
+	./bench/bce_monotonicity.exe data/10k_gon-0.55.csv bench/bce_monotonicity_10k_gon-0.55.txt
+
+bench/naive_diameter_random_walk-0.02.txt: data/10k_random_walk_2d-0.02.csv bench/naive_diameter.exe
+	./bench/naive_diameter.exe data/10k_random_walk_2d-0.02.csv bench/naive_diameter_random_walk-0.02.txt
+
+data/10k_gon-0.55.csv:
+	python datagen/regular_ngon.py --radius 0.55 --n 10000 -o data/10k_gon-0.55.csv
 
 data/10k_random_walk_2d-0.02.csv:
 	python datagen/random_walk_2d.py -o data/10k_random_walk_2d-0.02.csv --step-size 0.02
 
-DATA=data/10k_random_walk_2d.csv
+%.exe:
+	${CC} ${CCFLAGS} -o $@ $*.cpp ${cpp_files}
 
-bench/naive_diameter.exe:
-	${CC} ${CCFLAGS} -o bench/naive_diameter.exe bench/naive_diameter.cpp ${cpp_files}
+DATA=data/10k_random_walk_2d.csv
 
 naive: bench/naive_diameter.exe ${DATA}
 	@echo Build Successful! Running...
