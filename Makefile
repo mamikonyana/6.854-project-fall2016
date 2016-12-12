@@ -18,7 +18,7 @@ clean:
 	rm bench/*.exe bench/*.txt bench/*.csv
 .PHONY: clean
 
-plots/compare_monotonicity.png: bench/compare_monotonicity.csv
+plots/compare_monotonicity.png: bench/compare_monotonicity-moving.csv
 	cat $^
 
 plots/compare_diameter.png: bench/compare_diameter.csv
@@ -64,8 +64,17 @@ bench/bce_monotonicity_1k_random_walk-0.02.txt: bench/bce_monotonicity.exe data/
 bench/naive_monotonicity_1k_random_walk-0.02.txt: bench/naive_monotonicity.exe data/1k_random_walk_2d-0.02.csv
 	./$^ $@
 
-bench/compare_monotonicity.csv: bench/compare_monotonicity.exe data/10k_gon-0.55.csv data/10k_random_walk_2d-0.02.csv
+bench/compare_monotonicity-ngon.csv: bench/compare_monotonicity.exe data/3k_gon-0.55.csv data/10k_gon-0.55.csv data/30k_gon-0.55.csv 
+	./$^ 
+	mv bench/compare_monotonicity.csv $@
+
+bench/compare_monotonicity-moving.csv: bench/compare_monotonicity.exe data/gaussian_1000.csv data/gaussian_3333.csv data/gaussian_10000.csv data/gaussian_33333.csv data/gaussian_100000.csv data/gaussian_333333.csv
+	./$^ 
+	mv bench/compare_monotonicity.csv $@
+
+bench/compare_monotonicity-rv0.02.csv: bench/compare_monotonicity.exe data/3k_random_walk_2d-0.02.csv data/10k_random_walk_2d-0.02.csv data/30k_random_walk_2d-0.02.csv data/100k_random_walk_2d-0.02.csv data/300k_random_walk_2d-0.02.csv data/1000k_random_walk_2d-0.02.csv 
 	./$^
+	mv bench/compare_monotonicity.csv $@
 
 bench/compare_diameter.csv: bench/compare_diameter.exe data/10k_gon-0.55.csv data/10k_random_walk_2d-0.02.csv
 	./$^

@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     fprintf(outfile, "BCE,Naive\n");
     for (int i = 1; i < argc; i++) {
         auto data_file = argv[i];
-        printf("loading %s..\n", argv[1]);
+        printf("loading %s..\n", argv[i]);
         std::vector<Point> data = load_csv_data(data_file);
         printf("loaded %lu points\n", data.size());
 

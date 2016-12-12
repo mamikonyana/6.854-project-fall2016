@@ -10,7 +10,6 @@ std::vector<int> chan_prat_diameter_2d(std::vector<Point> &points) {
     RangeTree *node;
     for (int i = 0; i < N; i++) {
         node = rt.locate_tree(i);
-        // printf("start == %d ", node->getIndex());
         bool going_up = true;
         // Up phase
         while (going_up && node->is_root() == false) {
@@ -44,7 +43,6 @@ std::vector<int> chan_prat_diameter_2d(std::vector<Point> &points) {
         }
     }
     for (int i = N - 2; i >= 0; i--) {
-        // printf("%d, answer = %d, right_answer = %d\n", i, answer[i], answer[i+1]);
         answer[i] = std::min(answer[i+1], answer[i]);
     }
     return answer;
