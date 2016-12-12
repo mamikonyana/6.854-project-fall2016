@@ -26,6 +26,7 @@ void test_monotonicity_11gon() {
     check_vectors(exp_answer, bce_monotonicity_2d(data), "bce monotonicty_11gon");
 }
 
+
 void test_monotonicity_bce_vs_naive(std::string file) {
     std::vector<Point> data = load_csv_data(file.c_str());
 
@@ -46,6 +47,7 @@ void test_monotonicity_bce_vs_naive(std::string file) {
 int main() {
     test_monotonicity_simple_triangle();
     test_monotonicity_11gon();
+    test_monotonicity_bce_vs_naive("data/20_random_walk_2d-0.3.csv");
     test_monotonicity_bce_vs_naive("data/gaussian_20.csv");
     test_monotonicity_bce_vs_naive("data/gaussian_200.csv");
     test_monotonicity_bce_vs_naive("data/gaussian_2000.csv");
