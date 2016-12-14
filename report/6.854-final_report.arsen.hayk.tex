@@ -575,11 +575,24 @@ points it equals to $0.16$
 \section{Conclusion}
 \label{sec:conclusion}
 
-TODO: Finish Conclusion after other sections are polished.
+In this report we looked at two frameworks for testing queries for
+time ranges\cite{bokal2015, chan2016}, and implemented each of the
+frameworks for solving a corresponding hereditary property problem
+\cite{report_code}. Besides implementing the frameworks we had to
+implement other algorithms, e.g. sweep line and range trees, to
+solve corresponding hereditary property problems.
 
-It was really challenging to do an implementation project in computational geometry, some sentences in the papers take 100+ lines of code to implement. Thus, for small datasets, added complexity is not worth the speedup gained by the algorithm.
+We showed that both frameworks outperform simpler algorithms that
+have worse theoretical bound on synthetic datasets that mimic real
+life problems. We also showed that there is significant overhead
+that comes with these frameworks and sometimes if the dataset is
+simple naive algorithms outperform (or are equivalent) more
+complex ones.
 
-This was a great project otherwise, we've implemented couple of algorithms that we have seen during the lecture - sweep line, range tree, intersection of convex polygons using envelopes. Also couple that we had not found in Bokal et al and Chan, Prat.
+We learned that implementing computational geometry algorithms is
+tricky because all the algorithms have a lot of edge cases, and
+internal structure of data structures is very important to get the
+algorithm right.
 
 \bibliographystyle{unsrt}
 \bibliography{papers}
