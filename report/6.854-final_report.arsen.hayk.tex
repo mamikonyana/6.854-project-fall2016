@@ -2,6 +2,7 @@
 
 \usepackage{graphicx}
 \usepackage[shortlabels]{enumitem}
+\usepackage{url}
 
 
 \newcommand{\twopartdef}[4]
@@ -233,7 +234,8 @@ Both of these algorithms are similar to those of polygons, but the majority of t
 The envelope representation of polyarcs is also helpful for querying whether a point is inside the polyarc or no. One needs to simply do a binary search for the $x$ coordinate of the candidate point.
 If a vertical line at that location crosses the higher envelope on a larger value of $y$ than the lower envelope, then the query point is inside the polyarc.
 
-Overall, we wrote more than 1200 lines of code in C++ for the implementation of the algorithms, and 800 lines of code for testing. Large part of the code is dedicated to the closeness algorithm in $O(n \log^2 n)$. We used C++ for the implementation so that the overhead that the language adds to the runtime is minimized. A simple language to write code in is Python, but we think that in this case the strong type checking of C++ helped us, because of a complex structure of the code. 
+% note={\url{https://github.com/mamikonyana/6.854-project-fall2016}},
+Overall, we wrote more than 1200 lines of code in C++ for the implementation of the algorithms \cite{report_code}, and 800 lines of code for testing. Large part of the code is dedicated to the closeness algorithm in $O(n \log^2 n)$. We used C++ for the implementation so that the overhead that the language adds to the runtime is minimized. A simple language to write code in is Python, but we think that in this case the strong type checking of C++ helped us, because of a complex structure of the code. 
 
 \section{Experimental Results}
 \label{sec:experiments}
