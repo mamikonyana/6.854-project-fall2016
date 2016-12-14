@@ -53,7 +53,7 @@ With the abundance of GPS and other movement tracking sensors there is a large a
 
 In this paper we discuss and implement two properties for a sequence of points $S = s_1, \dots, s_n$:
 \begin{itemize}
-    \item \textit{Monotonicity}:  $S$ is \textit{monotone} if there is a direction vector $v$ such that TODO. In terms of trajectories, monotonicity shows whether the object travelled more or less in the same direction.
+    \item \textit{Monotonicity}:  $S$ is \textit{monotone} if there is a direction vector $v$ such that all vectors $\vec{(s_i, s_{i+1})}$ have a positive projection on $v$. In terms of trajectories, monotonicity shows whether the object travelled more or less in the same direction.
     
     \item \textit{Closeness}: $S$ is \textit{close} if any pair of points in $S$ is at most of distance $1$. One could use closeness queries to detect if a moving object mostly stayed in the same surrounding.
 \end{itemize}
@@ -63,8 +63,7 @@ For a property $P$ satisfying the restrictions above, let $j^*(i)$ be the larges
 Bokal et al. \cite{bokal2015} propose an algorithms that compute $j^*(i)$ in $O(n)$ time for monotonicity, and in $O(n\log^2 n)$ time for closeness. Chan and Pratt \cite{chan2016} describe a different algorithm to achieve the same result for closeness, but also improve it to $O(n\log n)$ using fractional cascading.
 
 The rest of the paper is organized as follows: Section \ref{sec:naive}
-describes the naive algorithms we developed to solve the problems
-we selected; in Section \ref{sec:monotonicity} we review the general
+describes the naive algorithms we developed to solve two problems; in Section \ref{sec:monotonicity} we review the general
 framework that is set in \cite{bokal2015} for solving time range
 query problems, and show how it is applied to compute $j^*(i)$ for
 monotonicity. Section \ref{sec:closeness} reviews the framework by
@@ -96,7 +95,7 @@ Noticing that
 \label{kj_rel}
 j^*(i) = \min( j^*(i + 1), k^*(i) )
 \end{equation}
-, we can calculate
+we can calculate
 $j^*(i)$ for all points in $O(n)$ extra time if we are given all
 values for $k^*(i)$. So we found a $O(n^2)$ algorithm for computing
 closeness property for all subsequences.
@@ -125,11 +124,12 @@ Figure \ref{fig:property_matrix} shows the anchor points on $A$
 
 Also shown in Figure \ref{fig:property_matrix} are rectangles formed using the anchor points. If we solve a rectangle (find the curve in $A$ separating 1's from 0's) for each rectangle, then we will be done, as stated in Lemma 2.1 from Bokal et al.
 
-\textbf{Lemma 2.1} Assume that we have the following two subroutines for sequence $S$ and a property $P$:
+\textbf{Lemma 2.1 [Bokal et al.]:} Assume that we have the following two subroutines for sequence $S$ and a property $P$:
 \begin{enumerate}[(a)]
     \item For any $a = 1, \dots, n$ find the $j^*(a)$, taking $T_{greedy}(j^*(a) - a)$
     \item Solve a rectangle with anchor points at opposite vertices (anchored rectangles). Suppose this module takes $T_{rect}(height(R) + width(R))$.
 \end{enumerate}
+Then we can solve the problem (i.e. find all $j^*(i)$) in time $O(n) + T_{greedy}((n)) + T_{rect}(n)$.
 
 Both of these modules are property specific, but Bokal et al. make another interesting generic step that explains how solving rectangles can be done using a divide-and-conquer approach. We will, however, skip that step and focus on the problem of monotonicity. It turns out that monotonicity does not require the divide-and-conquer approach to solve anchored rectangles.
 
@@ -168,13 +168,13 @@ for all the pairs using a range tree \cite{lueker1978data} that has a secondary 
 to make querying faster, and then they calculate $j^*$ values from
 those.
 
-During the first part of the algorithm we want a data structure
+During the first part of the algorithm we use a data structure
 that given a point $i$, could efficiently answer what is the point
 with smallest index $k^*(i)+1$ that lies outside a unit circle
-centered at $i$. To do this without running a binary search we build
-the following range tree.
+centered at $i$. Notice that this is equivalent to checking whether $s_i$ lines in the intersection of unit circles centered at points $s_{i+1}, \dots, s_{k^*(i)}$. The intersection of unit circles is convex and we call it \textit{polyarcs}, as it is similar to a polygon, but has arcs of circles as edges instead of straight lines.
+In order to check whether a point is inside a polyarc formed by a range of points in the given sequence, we use a binary range tree.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{figures/query_path}}
     \label{fig:query_path}
@@ -186,14 +186,10 @@ the following range tree.
 \end{figure}
 
 First we build a regular 1 dimensional range tree using indices of
-the data points. In order to answer queries efficiently, at each
-node $v$ we store intersections of circles centered at points
-belonging to the range of that node $v$. Once we have this tree
-that can answer query at each node in $Q(v)$ time, notice that the
-following algorithm will give us $O(Q(v) \log n)$ time algorithm for
-finding $k^*(i)$ for a single point.
+the data points. Each node $v$ of the range tree represents a continuous interval of a given points, and stores the polyarc that is formed by intersecting unit circles centered at these points.
 
-Algorithm will starts at query point $q$ (see Figure \ref{fig:query_path})
+Suppose we have an algorithm that can test whether a point is inside a polyarc in $Q(n)$ time. Then using the range tree we can find $k^*(i)$ for any point in $O(Q(n)\log n)$ time using the following algorithm. It starts the search from a leaf corresponding to the query point $q$ (see Figure \ref{fig:query_path}).
+
 \begin{enumerate}[-]
 \item
 In the first ``up'' phase, we walk upward from $q$ towards the root.
@@ -215,26 +211,13 @@ we query the secondary structure at the left child to see if there exists a poin
 \end{itemize}
 \end{enumerate}
 
-
 After we find $k^*(i)$ for all the nodes, we combine those using
-Equation \ref{kj_rel} in $O(n)$ time. Which gives total runtime of
-$O(n \log n Q(n))$. Now we present the seqondary data structure
-that has query time $Q(n) = \log n$, and total build time $O(n \log
-n)$
+Equation \ref{kj_rel} in $O(n)$ time to find $j^*(i)$ for all $i$. This gives total runtime of
+$O(n \log n Q(n))$.
 
-Using sweep line \cite{shamos1976geometric} technique (more in Section \ref{sec:implementation})
-we can merge two intersections of circles in linear time. This is
-possible because intersections of circles is very similar to a
-convex hull, but instead of a polygon it has arcs connecting vertices
-instead of line segments. We call this data structe a \textit{polyarc}.
+Now, to compute the intersection of polyarcs we use a relatively standard technique. It is possible to extend the sweep-line polygon intersection algorithm by Shamos and Hoey \cite{shamos1976geometric}, for computing polyarc intersections in linear time, assuming that the vertices of the shapes are given in sorted order. We can construct the range-tree from bottom to up, at each level spending $O(n)$ time to intersect all polyarcs on that level. Therefore, the total construction time of a range tree is $O(n \log n)$.
 
-By adding \textit{polyarc}s to nodes of the range tree (based on indices)
-from bottom to up, at each level we'll spend $O(n)$ time since the
-merging of \textit{polyarc}s is done in linear time, so total construction
-time will be $O(n \log n)$, and we can answer contins queries in
-$O(\log (n))$ time by doing binary search to which arc the query
-point $q$ might belong using the $x$ coordinate of $q$ and $x$
-coordinates of the vertices of the \textit{polyarc}.
+By storing the vertices of the polyarcs in sorted order with respect to their $x$ coordinate we can answer \textit{contains} queries in $Q(n) = O(\log n)$ time using a binary search. This gives us an $O(n\log^2 n)$ algorithm to compute $j^*(i)$ for all $i$. The next section contains the details about the implementation of this algorithm.
 
 \section{Implementation Details}
 \label{sec:implementation}
@@ -245,7 +228,7 @@ Higher level algorithm was easier of the two, it involved implementing a range t
 
 A polyarc is a convex geometric shape, which is defined by a clockwise set of its vertices like a polygon. Unlike a polygon, each edge of a polyarc is an arc of a circle. The algorithm needs to be able to find the intersection of two polyarcs, and also decide whether a query point is inside the polyarc.
 
-Both of these algorithms are similar to those of polygons, but the majority of the implementation effort was spent to handle the cases specific to polyarcs. Our representation of polyarcs has two ``sides'': upper and lower, respectively the upper part of the complex shape and the lower one. To intersect two polyarcs we first found a minimal upper envelope i.e. for each $x$ coordinate found recorded the polyarc, which had a lower upper side. Similarly, we computed a maximal lower envelope. The area above the maximal lower envelope and minimal upper envelope is the intersection of two polyarcs. Each of these steps can be performed in linear time by a sweep line technique.
+Both of these algorithms are similar to those of polygons, but the majority of the implementation effort was spent to handle the cases specific to polyarcs. Our representation of polyarcs has two ``sides'': upper and lower, respectively the upper part of the complex shape and the lower one. To intersect two polyarcs we first find a minimal upper envelope i.e. for each $x$ coordinate we recorded the polyarc that had a lower upper side. Similarly, we computed a maximal lower envelope. The area above the maximal lower envelope and minimal upper envelope is the intersection of two polyarcs. Each of these steps can be performed in linear time by a sweep line technique.
 
 The envelope representation of polyarcs is also helpful for querying whether a point is inside the polyarc or no. One needs to simply do a binary search for the $x$ coordinate of the candidate point.
 If a vertical line at that location crosses the higher envelope on a larger value of $y$ than the lower envelope, then the query point is inside the polyarc.
@@ -287,10 +270,25 @@ that the runtimes of the two algorithms are actually very close in
 practice for this case.
 
 \begin{figure}[!ht]
-  \centering
-  \includegraphics[height=5cm]{figures/monotonicity_comparison}
-  \caption{Runtimes (in millseconds) of Naive and Bokal et. al}
-  \label{fig:monotonicity_comparison}
+    \centering
+%  \includegraphics[height=5cm]{figures/monotonicity_comparison}
+    \begin{tabular}{c|c}
+      Bokal et al. & Naive \\
+      \hline
+      0.616     &    3.43 \\
+      \hline
+      2.008     &    12.799 \\
+      \hline
+      6.038     & 45.436 \\
+      \hline
+      19.33     & 152.641 \\
+      \hline
+      61.926    & 428.032 \\
+      \hline
+      194.457   & 1454.634
+    \end{tabular}
+    \caption{Runtimes (in millseconds) of Naive and Bokal et. al}
+    \label{fig:monotonicity_comparison}
 \end{figure}
 
 \subsection{Closeness}
@@ -324,7 +322,21 @@ TODO(arsen): Fix timing comparison
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[height=5cm]{figures/diameter_comparison}
+    \begin{tabular}{c|c}
+        Bokal et al. & Naive \\
+        \hline
+        0.616     &    3.43 \\
+        \hline
+        2.008     &    12.799 \\
+        \hline
+        6.038     & 45.436 \\
+        \hline
+        19.33     & 152.641 \\
+        \hline
+        61.926    & 428.032 \\
+        \hline
+        194.457   & 1454.634
+    \end{tabular}
   \caption{Runtimes (in millseconds) of Naive and Chan, Prat [Similar to Figure \ref{fig:monotonicity_comparison}}
   \label{fig:diameter_comparison}
 \end{figure}
