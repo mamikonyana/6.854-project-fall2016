@@ -19,7 +19,7 @@ clean:
 .PHONY: clean
 
 
-report.pdf: plots/diameter_random_walk.png plots/monotonicity_moving_gaussian.png
+report.pdf: plots/diameter_random_walk.png plots/monotonicity_moving_gaussian.png plots/monotonicity_random_walk.png
 	cd report && latexrun 6.854-final_report.arsen.hayk.tex
 	cp report/6.854-final_report.arsen.hayk.pdf $@
 	open $@
@@ -28,6 +28,9 @@ report.pdf: plots/diameter_random_walk.png plots/monotonicity_moving_gaussian.pn
 ## Report png's
 plots/diameter_random_walk.png: bench/chan_prat_diameter_random_walk-0.02.txt
 	python vis/pretty_answer_triangle.py $^ --png $@ --label "Chan, Prat" --title "diameter: Random Walk"
+
+plots/monotonicity_random_walk.png: bench/bce_monotonicity_random_walk-0.02.txt
+	python vis/pretty_answer_triangle.py $^ --png $@ --label "Bokal, Cabello, Eppstein" --title "Monotonicity: random walk."
 
 plots/monotonicity_moving_gaussian.png: bench/bce_monotonicity_moving_gaussian.txt
 	python vis/pretty_answer_triangle.py $^ --png $@ --label "Bokal, Cabello, Eppstein" --title "Monotonicity: moving point with Gaussian Noise."
@@ -103,6 +106,9 @@ bench/bce_monotonicity_10k_gon-0.55.txt: bench/bce_monotonicity.exe data/10k_gon
 	./$^ $@
 
 bench/bce_monotonicity_moving_gaussian.txt: bench/bce_monotonicity.exe data/10000_gaussian_noise-0.05.csv
+	./$^ $@
+
+bench/bce_monotonicity_random_walk-0.02.txt: bench/bce_monotonicity.exe data/10k_random_walk_2d-0.02.csv
 	./$^ $@
 
 bench/naive_diameter_random_walk-0.02.txt: bench/naive_diameter.exe data/10k_random_walk_2d-0.02.csv

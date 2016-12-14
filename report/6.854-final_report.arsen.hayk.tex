@@ -254,57 +254,85 @@ Overall, we wrote more than 1200 lines of code in C++ for the implementation of 
 
 \section{Experimental Results}
 \label{sec:experiments}
-- mention that we have used random walk to mimic reality. in that case the good algorithm for monotonicity is not that good. but for the worst case, it's great.
-
-- 
-
-
+We have tested the performance of the algorithms we've implemented with synthetic datasets, that we have tried to model based on some potential problems where the algorithms could have been used.
+% - mention that we have used random walk to mimic reality. in that case the good algorithm for monotonicity is not that good. but for the worst case, it's great.
+% - 
 
 \subsection{Monotonicity}
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[height=8cm]{../plots/monotonicity_moving_gaussian}
-  \caption{Monotonicity algorithm results for moving point with Gaussian noise.}
+  \caption{Property matrix for movement monotonicity for time intervals for a point moving steadily in $x$ direction with Gaussian noise with $\sigma_x = 0.05, \sigma_y = 1$.}
   \label{fig:monotonicity_demo}
 \end{figure}
 
-First let's look at the monotonicity resutls. Here we use the following dataset.
+For monotonicity we have tried looking at a tajectory of a particle
+moving steadily along $x$ axis, but with some noise added to the
+movement. And the goal is to find all subsequences of intervals
+that the trajectory had some constant direction. In Figure
+\ref{fig:monotonicity_demo} you can see the property matrix (i.e. the region where the property holds) when the noise added is a Gaussian
+noise with standard deviations $\sigma_x = 0.05, \sigma_y = 1$.
 
-We have a point moving along $x$ axis in the positive direction with speed 1 (i.e. 1 per index), we add Gaussian noise to this point to make the problem interseting. In Figure \ref{fig:monotonicity_demo} you can see results for noise with standard deviations $\sigma_y = 0.05, \sigma_y = 1$. After we generate the dataset, we run Bokal et. al algorithm on the dataset and the answer boundarries of the matrix $A$ that indicates if for points in range $[i, j]$ exists a common direction that has positive dot product with each of the displacements.
-
+You can see that the area of the region where the property is substential, so we expect Naive algorithm to perform worse than the faster version that we've implemented. 
 Figure \ref{fig:monotonicity_comparison} shows runtime differences in millliseonds between Naive algorithm and algorithm we presented from Bokal et al.
+
+TODO: Informative plot for gaussian... Actually make plots double plots (side by side, for 2 examples we are going to show) TODO TODO
+
+Whereas if we look at a different dataset, e.g. a random walk, the
+performance results could be different. Figure
+\ref{fig:monotonicity_random_walk} shows the property matrix for a
+random walk, and Figure \ref{fig:monotonicity_comparison_2} shows
+that the runtimes of the two algorithms are actually very close in
+practice for this case.
+
 \begin{figure}[!ht]
   \centering
-  \includegraphics[height=5cm]{../plots/monotonicity_comparison}
+  \includegraphics[height=5cm]{figures/monotonicity_comparison}
   \caption{Runtimes (in millseconds) of Naive and Bokal et. al}
   \label{fig:monotonicity_comparison}
 \end{figure}
 
-\subsection{Diameter}
+\subsection{Closeness}
 
-Now the dataset is a random walk starting at the origin. At each step we uniform randomly pick a direction, and move 0.3 distance in that direction. We keep doing this until we have enough points for an experiment.
+For testing the closeness algorithm, we have generated points from a random walk.
+At each step we uniform randomly pick a direction, and move 0.3
+distance in that direction. And we want to know all subsequences
+of the walk that are clustered together within distance of 1.
 
+Figure \ref{fig:diameter_demo} shows the property matrix when running
+closeness algorithm on the random walk data, and
+\ref{fig:monotonicity_comparison} shows runtime comparisons for
+different dataset sizes.
+
+We can see that \ref{fig:diameter_demo} the area of the matrix where
+the property is true is significant, and that's why we are saving
+a lot of performance. If we were to look at the example from previous
+part, the difference would not be as big, Figures \ref{fig:xxx} and
+\ref{fig:yyy} demonstrate that. TODO: Question to Hayk: should we even show more results like this??
+
+TODO(arsen): Figure out example when runtimes are close together.
 
 \begin{figure}[!h]
   \centering
   \includegraphics[height=8cm]{../plots/diameter_random_walk}
-  \caption{Caption...}
+  \caption{Property matrix for checking 1 distance closeness on a random walk with step size 0.3}
   \label{fig:diameter_demo}
 \end{figure}
 
-Figure \ref{fig:diameter_demo} shows boundaries of points that satisfy all points in range $[i, j]$ fall into some circle with radius 1.
+TODO(arsen): Fix timing comparison 
 
-Figure \ref{fig:diameter_comparison} will show results comparing runtimes of Naive algorithm with algorithm we presented from Bokal et al.
 \begin{figure}[!ht]
   \centering
-  \includegraphics[height=5cm]{../plots/diameter_comparison}
+  \includegraphics[height=5cm]{figures/diameter_comparison}
   \caption{Runtimes (in millseconds) of Naive and Chan, Prat [Similar to Figure \ref{fig:monotonicity_comparison}}
   \label{fig:diameter_comparison}
 \end{figure}
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+TODO: Finish Conclusion after other sections are polished.
 
 It was really challanging to do an implementation project in computational geometry, some sentences in the papers take 100+ lines of code to implement. Thus, for small datasets, added complexity is not worth the speedup gained by the algorithm.
 
