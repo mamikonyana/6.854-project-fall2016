@@ -158,6 +158,8 @@ to the monotonicity problems. We have evaluated Naive algorithm
 \label{sec:closeness}
 TODO: Arsen, this section should describe some preliminaries of the algorithm (e.g. the notion of polyarcs), so that there is coherency between the sections.
 
+The novelty of the algorithm from Chan, Pratt is how they combine 1D range tree, with secondary structure that stores circle intersections. While the algorithm is elegant, its implementation is not. In particular, it is necessary to implement an intersection algorithm for arbitrary \textit{polyarcs}. A polyarc is a convex object, similar to a polygon, but instead of straight edges each side is an arc of a circle. The algorithm for the intersection of polyarcs is similar to that of polygons, however there are many more edge cases to consider.
+
 \section{Implementation Details}
 \label{sec:implementation}
 In the papers reviewed here (\cite{bokal2015,chan2016}) there are at least 6 algorithms presented. We wanted to implement algorithm that use frameworks of both papers. In order to limit the size of the implementation we decided to pick monotonicity property for its simplicity (and elegance), which was solved in Bokal et al. \cite{bokal2015}. We chose to implement the closeness testing algorithm from \cite{chan2016} because it used many ideas from the class, for example the intersection of convex envelopes in 2 dimensions, range trees.
@@ -173,41 +175,13 @@ If a vertical line at that location crosses the higher envelope on a larger valu
 
 Overall, we wrote more than 1200 lines of code in C++ for the implementation of the algorithms, and 800 lines of code for testing. Large part of the code is dedicated to the closeness algorithm in $O(n \log^2 n)$. We used C++ for the implementation so that the overhead that the language adds to the runtime is minimized. A simple language to write code in is Python, but we think that in this case the strong type checking of C++ helped us, because of a complex structure of the code. 
 
-\section{Experiments}
+\section{Experimental Results}
 \label{sec:experiments}
 - mention that we have used random walk to mimic reality. in that case the good algorithm for monotonicity is not that good. but for the worst case, it's great.
 
 - 
 
-\section{Conclusion}
-\label{sec:conclusion}
 
-We will describe their algorithm for monotonicity property, which due to its simplicity does not require a divide and conquer in the second stage of the algorithm.
-
-\section{Our contribution}
-We've implemented
-\begin{itemize}
-\item In $O(n)$ time  we  can  find  all  maximal  subsequences  that  define  monotone  paths  in  some (subpath-dependent) direction. \cite{bokal_et_al:LIPIcs:2015:5113} 
-\item In $O(n \log^2 n)$ time time we can find all maximal subsequences with diameter at most 1. \cite{chan_et_al:LIPIcs:2016:5920}
-\end{itemize}
-
-\section{Algorithms}
-\subsection{$k^*$}
-
-Let $k^*(i) = \inf_{m \geq i} \{d(i, m) > 1\}$. \textbf{Claim} $j^*(i-1) = \min(j^*(i), k^*(i-1))$. Thus after we calculate $k^*(i)$ for all elements, we can calculate $j^*(i)$ in $O(n)$ time by looping over all indices in the reverse order.
-
-\subsection{Bokal et al Overview}
-TODO: A page that deftly describes the algorithm we've implemented.
-
-\subsection{Chan, Prat Overview}
-TODO: A page that deftly describes the algorithm we've implemented.
-
-\section{Implementation Details}
-In this section we discuss some implementation details of the Chan, Pratt algorithm for diameter query problem. We skip the details of the monotonicity query, because it was relatively simple.
-
-The novelty of the algorithm from Chan, Pratt is how they combine 1D range tree, with secondary structure that stores circle intersections. While the algorithm is elegant, its implementation is not. In particular, it is necessary to implement an intersection algorithm for arbitrary \textit{polyarcs}. A polyarc is a convex object, similar to a polygon, but instead of straight edges each side is an arc of a circle. The algorithm for the intersection of polyarcs is similar to that of polygons, however there are many more edge cases to consider.
-
-\section{Experimental Results}
 
 \subsection{Monotonicity}
 
@@ -256,6 +230,8 @@ Figure \ref{fig:diameter_comparison} will show results comparing runtimes of Nai
 \end{figure}
 
 \section{Conclusion}
+\label{sec:conclusion}
+
 It was really challanging to do an implementation project in computational geometry, some sentences in the papers take 100+ lines of code to implement. Thus, for small datasets, added complexity is not worth the speedup gained by the algorithm.
 
 This was a great project otherwise, we've implemented couple of algorithms that we have seen during the lecture - sweep line, range tree, intersection of convex polygons using envelopes. Also couple that we had not found in Bokal et al and Chan, Prat.
