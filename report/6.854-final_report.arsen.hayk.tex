@@ -91,7 +91,12 @@ Define $k^*(i)$ as the largest index such that $d(s_i, s_j) \leq
 1$ for all $j \leq k^*(i)$. Clearly, $k^*(i) \geq j^*(i)$ because we are checking for a weaker property. Also,
 notice that $k^*$ can be computed in $O(n^2)$ for all points by calculating all pairwise distances.
 
-Noticing that $j^*(i) = \min( j^*(i + 1), k^*(i) )$, we can calculate
+Noticing that 
+\begin{equation}
+\label{kj_rel}
+j^*(i) = \min( j^*(i + 1), k^*(i) )
+\end{equation}
+, we can calculate
 $j^*(i)$ for all points in $O(n)$ extra time if we are given all
 values for $k^*(i)$. So we found a $O(n^2)$ algorithm for computing
 closeness property for all subsequences.
@@ -113,7 +118,7 @@ Figure \ref{fig:property_matrix} shows the anchor points on $A$
 
 \begin{figure}
     \centering
-    \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{figures/property_matrix.pdf}}
+    \makebox[\textwidth][c]{\includegraphics[width=1.1\textwidth]{figures/property_matrix.pdf}}
     \label{fig:property_matrix}
     \caption{The property matrix $A_P$. The blue regions show the locations that are 1. The left image illustrates the anchor points. The middle one shows the greedily constructed rectangles from the anchor points. On the right side is the detailed view of the property matrix. Figure from \cite{bokal2015}.}
 \end{figure}
@@ -154,19 +159,91 @@ to the monotonicity problems. We have evaluated Naive algorithm
 
 %Notice, however, this type of recursion will just end up calling $J_P$ for all indices in $[a, a + h]$, having no divide-and-conquer effect.
 
-\section{something and Closeness TODO}
+\section{Closeness in $O(n \log^2 n)$}
 \label{sec:closeness}
-TODO: Arsen, this section should describe some preliminaries of the algorithm (e.g. the notion of polyarcs), so that there is coherency between the sections.
 
-The novelty of the algorithm from Chan, Pratt is how they combine 1D range tree, with secondary structure that stores circle intersections. While the algorithm is elegant, its implementation is not. In particular, it is necessary to implement an intersection algorithm for arbitrary \textit{polyarcs}. A polyarc is a convex object, similar to a polygon, but instead of straight edges each side is an arc of a circle. The algorithm for the intersection of polyarcs is similar to that of polygons, however there are many more edge cases to consider.
+Chan, Prat \cite{chan2016} take a different approach to calculating
+hereditary properties, they first efficiently calculate $k^*$ values
+for all the pairs using a range tree \cite{lueker1978data} that has a secondary structure
+to make querying faster, and then they calculate $j^*$ values from
+those.
+
+During the first part of the algorithm we want a data structure
+that given a point $i$, could efficiently answer what is the point
+with smallest index $k^*(i)+1$ that lies outside a unit circle
+centered at $i$. To do this without running a binary search we build
+the following range tree.
+
+\begin{figure}
+    \centering
+    \makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{figures/query_path}}
+    \label{fig:query_path}
+    \caption{A search path finding $p = k^*(q) + 1$ of point $q$.
+    The search goes up until it find a range where $p$ lies and
+    then goes down narrowing down the range until it reaches the
+    leaf $p$.
+    Figure from \cite{chan2016}.}
+\end{figure}
+
+First we build a regular 1 dimensional range tree using indices of
+the data points. In order to answer queries efficiently, at each
+node $v$ we store intersections of circles centered at points
+belonging to the range of that node $v$. Once we have this tree
+that can answer query at each node in $Q(v)$ time, notice that the
+following algorithm will give us $O(Q(v) \log n)$ time algorithm for
+finding $k^*(i)$ for a single point.
+
+Algorithm will starts at query point $q$ (see Figure \ref{fig:query_path})
+\begin{enumerate}[-]
+\item
+In the first ``up'' phase, we walk upward from $q$ towards the root.
+Each time we go up from a left child, we query the secondary structure
+at righ sibling, to see if there exists a point in that range that
+is far from $q$.
+\begin{itemize}
+\item If no, we can extend the search by going one more level up.
+\item If yes, the first point far from $q$ is in the right child, so we proceed to the second step to locate that node.
+\end{itemize}
+
+
+\item In the second (``down'') phase, we walk downward from the
+current node to a leaf to locate the far point with smallest index. Each time we descend from a node,
+we query the secondary structure at the left child to see if there exists a point in the left child's range that is far from $q$
+\begin{itemize}
+\item If no, the point that's far from $q$ lies in the range of the right child, so we descend right.
+\item If yes, we descend left.
+\end{itemize}
+\end{enumerate}
+
+
+After we find $k^*(i)$ for all the nodes, we combine those using
+Equation \ref{kj_rel} in $O(n)$ time. Which gives total runtime of
+$O(n \log n Q(n))$. Now we present the seqondary data structure
+that has query time $Q(n) = \log n$, and total build time $O(n \log
+n)$
+
+Using sweep line \cite{shamos1976geometric} technique (more in Section \ref{sec:implementation})
+we can merge two intersections of circles in linear time. This is
+possible because intersections of circles is very similar to a
+convex hull, but instead of a polygon it has arcs connecting vertices
+instead of line segments. We call this data structe a \textit{polyarc}.
+
+By adding \textit{polyarc}s to nodes of the range tree (based on indices)
+from bottom to up, at each level we'll spend $O(n)$ time since the
+merging of \textit{polyarc}s is done in linear time, so total construction
+time will be $O(n \log n)$, and we can answer contins queries in
+$O(\log (n))$ time by doing binary search to which arc the query
+point $q$ might belong using the $x$ coordinate of $q$ and $x$
+coordinates of the vertices of the \textit{polyarc}.
 
 \section{Implementation Details}
 \label{sec:implementation}
 In the papers reviewed here (\cite{bokal2015,chan2016}) there are at least 6 algorithms presented. We wanted to implement algorithm that use frameworks of both papers. In order to limit the size of the implementation we decided to pick monotonicity property for its simplicity (and elegance), which was solved in Bokal et al. \cite{bokal2015}. We chose to implement the closeness testing algorithm from \cite{chan2016} because it used many ideas from the class, for example the intersection of convex envelopes in 2 dimensions, range trees.
 
-The implementations of naive algorithms as well as of the efficient monotonicity testing algorithm are relatively easy, so in this paper we skip discussing them. We implemented the $O(n \log ^2 n)$ algorithm for solving closeness testing from \cite{chan2016}.
+The implementations of naive algorithms as well as of the efficient monotonicity testing algorithm are relatively easy, so in this paper we skip discussing them. We implemented the $O(n \log ^2 n)$ algorithm for solving closeness testing from \cite{chan2016}.  The algorithm has two distinct parts: a high-level tree-range data structure, and a lower-level data structure for storing \textit{polyarcs} (see Section \ref{sec:closeness}).
+Higher level algorithm was easier of the two, it involved implementing a range tree and the querying algorithm described in Section \ref{sec:closeness}.
 
-The algorithm has two distinct parts: a high-level tree-range data structure, and a lower-level data structure for storing \textit{polyarcs} (see Section \ref{sec:closeness}). A polyarc is a convex geometric shape, which is defined by a clockwise set of its vertices like a polygon. Unlike a polygon, each edge of a polyarc is an arc of a circle. The algorithm needs to be able to find the intersection of two polyarcs, and also decide whether a query point is inside the polyarc.
+A polyarc is a convex geometric shape, which is defined by a clockwise set of its vertices like a polygon. Unlike a polygon, each edge of a polyarc is an arc of a circle. The algorithm needs to be able to find the intersection of two polyarcs, and also decide whether a query point is inside the polyarc.
 
 Both of these algorithms are similar to those of polygons, but the majority of the implementation effort was spent to handle the cases specific to polyarcs. Our representation of polyarcs has two ``sides'': upper and lower, respectively the upper part of the complex shape and the lower one. To intersect two polyarcs we first found a minimal upper envelope i.e. for each $x$ coordinate found recorded the polyarc, which had a lower upper side. Similarly, we computed a maximal lower envelope. The area above the maximal lower envelope and minimal upper envelope is the intersection of two polyarcs. Each of these steps can be performed in linear time by a sweep line technique.
 
@@ -184,8 +261,6 @@ Overall, we wrote more than 1200 lines of code in C++ for the implementation of 
 
 
 \subsection{Monotonicity}
-
-TODO: Describe Naive algorithm which is a $O(n^2)$ algorithm.
 
 \begin{figure}[!ht]
   \centering
@@ -210,7 +285,6 @@ Figure \ref{fig:monotonicity_comparison} shows runtime differences in millliseon
 
 Now the dataset is a random walk starting at the origin. At each step we uniform randomly pick a direction, and move 0.3 distance in that direction. We keep doing this until we have enough points for an experiment.
 
-TODO: Describe Naive algorithm which is a $O(n^2)$ algorithm.
 
 \begin{figure}[!h]
   \centering
