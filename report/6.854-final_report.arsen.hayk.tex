@@ -58,12 +58,12 @@
 \label{sec:intro}
 
 With the abundance of GPS and other movement tracking sensors there
-is a large amount of timestamped location data. And there are a lot
-of papers in recent years dealing with trajectory analysis
-\cite{buchin2011finding, gudmundsson2007efficient, aronov2016segmentation}.
-In this work we focus on implementation and analysis of two such
-algorithms dealing with hereditary properties \cite{bokal2015,
-chan2016}.
+is a large amount of timestamped location data.  This has led to
+an increasing interest in geometric algorithms dealing with trajectory
+analysis \cite{buchin2011finding, gudmundsson2007efficient,
+aronov2016segmentation}.  In this work we focus on implementation
+and analysis of two such algorithms dealing with hereditary properties
+\cite{bokal2015, chan2016}.
 
 The movement of an object in space can be modelled by a sequence
 of points $S = s_1, \dots, s_n$. To analyse the trajectory of the
@@ -292,7 +292,7 @@ a polyarc in $Q(n)$ time. Then using the range tree we can find
 $k^*(i)$ for any point in $O(Q(n)\log n)$ time using the following
 algorithm. It starts the search from a leaf corresponding to the
 query point $q$ (see Figure 2).
-% TODO: latex messes up Figure number, so hardcode it for now!
+% NOTE: latex messes up Figure number, so hardcode it for now!
 
 \begin{enumerate}[-]
 \item
