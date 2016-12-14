@@ -37,6 +37,12 @@ plots/monotonicity_moving_gaussian.png: bench/bce_monotonicity_moving_gaussian.t
 
 report/compare_monotonicity.table:
 
+plots/diameter_datasets: bench/chan_prat_diameter_moving_gaussian.txt bench/chan_prat_diameter_random_walk-0.02.txt
+	python vis/mean_subsequence_length.py $^
+
+plots/monotonicity_datasets: bench/bce_monotonicity_moving_gaussian.txt bench/bce_monotonicity_random_walk-0.02.txt
+	python vis/mean_subsequence_length.py $^
+
 ## Debug png's
 
 plots/compare_monotonicity.png: bench/compare_monotonicity-moving.csv
@@ -123,6 +129,9 @@ bench/naive_diameter_random_walk-0.02.txt: bench/naive_diameter.exe data/10k_ran
 	./$^ $@
 
 bench/chan_prat_diameter_random_walk-0.02.txt: bench/chan_prat_diameter.exe data/10k_random_walk_2d-0.02.csv
+	./$^ $@
+
+bench/chan_prat_diameter_moving_gaussian.txt: bench/chan_prat_diameter.exe data/10000_gaussian_noise-0.05.csv
 	./$^ $@
 
 bench/chan_prat_diameter_10k_gon-0.55.txt: bench/chan_prat_diameter.exe data/10k_gon-0.55.csv

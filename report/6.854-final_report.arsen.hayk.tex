@@ -287,8 +287,8 @@ practice for this case.
     \hline
         333333    & 202.0    & 1398.2  \\
     \end{tabular}
-    \caption{Runtimes (in millseconds) of Naive and Bokal et. al for point moving in $x$ direction with Gaussian noise.}
-    \label{fig:monotonicity_comparison2}
+    \caption{Runtimes (in millseconds) of Naive and Bokal et. al for point moving in $x$ direction with Gaussian noise. Mean value of $j^*(i) - i = 1520$}
+    \label{fig:monotonicity_comparison_moving_gaussian}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -309,8 +309,8 @@ practice for this case.
 	\hline
 	    1000000    & 629.5    & 909.6 
 	\end{tabular}
-    \caption{Runtimes (in millseconds) of Naive and Bokal et. al for random walk dataset.}
-    \label{fig:monotonicity_comparison2}
+    \caption{Runtimes (in millseconds) of Naive and Bokal et. al for random walk dataset. Mean value of $j^*(i) - i = 4.0$}
+    \label{fig:monotonicity_comparison_random_walk}
 \end{figure}
 
 \subsection{Closeness}
@@ -333,14 +333,16 @@ part, the difference would not be as big, Figures \ref{fig:xxx} and
 
 TODO(arsen): Figure out example when runtimes are close together.
 
-\begin{figure}[!h]
+TODO(arsen): Fix timing comparison 
+
+TODO: we picked datasets that do not have the worst case runtime, but are also not very trivial.
+
+\begin{figure}[!ht]
   \centering
   \includegraphics[height=8cm]{../plots/diameter_random_walk}
   \caption{Property matrix for checking 1 distance closeness on a random walk with step size 0.3}
   \label{fig:diameter_demo}
 \end{figure}
-
-TODO(arsen): Fix timing comparison 
 
 \begin{figure}[!ht]
   \centering
@@ -359,8 +361,8 @@ TODO(arsen): Fix timing comparison
 \hline
     333333    & 2736.9    & 157.3 
 \end{tabular}
-  \caption{Runtimes (in millseconds) of Naive and Chan, Prat on \textbf{moving point} dataset [Similar to Figure \ref{fig:monotonicity_comparison}}
-  \label{fig:diameter_comparison}
+  \caption{Runtimes (in millseconds) of Naive and Chan, Prat on \textbf{moving point} dataset. Mean value of $j^*(i) - i = 0.16$}
+  \label{fig:diameter_comparison_moving_gaussian}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -376,8 +378,8 @@ TODO(arsen): Fix timing comparison
 \hline
     100000    & 2751.2    & 90934.6 
 \end{tabular}
-  \caption{Runtimes (in millseconds) of Naive and Chan, Prat on \textbf{random walk} dataset [Similar to Figure \ref{fig:monotonicity_comparison}}
-  \label{fig:diameter_comparison}
+  \caption{Runtimes (in millseconds) of Naive and Chan, Prat on \textbf{random walk} dataset. Mean value of $j^*(i) - i = 1013$}
+  \label{fig:diameter_comparison_random_walk}
 \end{figure}
 
 \section{Conclusion}
