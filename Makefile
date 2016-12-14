@@ -20,8 +20,8 @@ clean:
 
 
 report.pdf: plots/diameter_random_walk.png plots/monotonicity_moving_gaussian.png
-	latexrun report/6.854-final_report.arsen.hayk.tex
-	mv 6.854-final_report.arsen.hayk.pdf $@
+	cd report && latexrun 6.854-final_report.arsen.hayk.tex
+	cp report/6.854-final_report.arsen.hayk.pdf $@
 	open $@
 .PHONY: report.pdf
 

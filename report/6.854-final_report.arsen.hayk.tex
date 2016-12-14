@@ -42,10 +42,8 @@
 
 \section{Introduction}
 \label{sec:intro}
-TODO: replace all arch to arc, arch is a part of a bridge, arc is a part of a circle\\
 
 TODO: add normal references (maybe to envelopes), see the first paper, where in the first page there are a lot of motivational references.
-
 
 With the abundance of GPS and other movement tracking sensors there is a large amount of timestamped location data. The movement of an object in space can be modelled by a sequence of points $S = s_1, \dots, s_n$. To analyse the trajectory of the movement, one may want to check a certain property $P$ for portions $S[i, j] = s_i, \dots, s_j$ of $S$ for given values of $i$ and $j$. This paper discusses how to efficiently address such queries when $P$ satisfies the following two properties:
 \begin{itemize}
@@ -60,11 +58,20 @@ In this paper we discuss and implement two properties for a sequence of points $
     \item \textit{Closeness}: $S$ is \textit{close} if any pair of points in $S$ is at most of distance $1$. One could use closeness queries to detect if a moving object mostly stayed in the same surrounding.
 \end{itemize}
 
-For a property $P$ satisfying the restrictions above, let $j^*(i)$ be the largest index $j$ such that $P$ holds for $S[i, j^*(i)] = s_i, \dots, s_{j^*(i)}$. Now notice, that since $P$ is a hereditary property $P(S[i, j]) = true$ if and only if $j \leq j^*(i)$. Therefore, if we construct $j^*(i)$ we can answer property testing queries in $O(1)$. Therefore, for the rest of the paper our goal will be to efficiently compute $j^*(i)$.
+For a property $P$ satisfying the restrictions above, let $j^*(i)$ be the largest index $j$ such that $P$ holds for $S[i, j^*(i)] = s_i, \dots, s_{j^*(i)}$. Now notice, that since $P$ is a hereditary property $P(S[i, j]) = true$ if and only if $i \leq j \leq j^*(i)$. Therefore, if we construct $j^*(i)$ we can answer property testing queries in $O(1)$. Therefore, for the rest of the paper our goal will be to efficiently compute $j^*(i)$.
 
 Bokal et al. \cite{bokal2015} propose an algorithms that compute $j^*(i)$ in $O(n)$ time for monotonicity, and in $O(n\log^2 n)$ time for closeness. Chan and Pratt \cite{chan2016} describe a different algorithm to achieve the same result for closeness, but also improve it to $O(n\log n)$ using fractional cascading.
 
-The rest of the paper is organized as follows: Section \ref{sec:naive} describes the naive algorithms we developed to solve the problems we selected; in Section \ref{sec:monotonicity} we review the general framework that is set in \cite{bokal2015} for solving time range query problems, and show how it is applied to computer $j^*(i)$ for monotonicity. Section \ref{sec:closeness} reviews the framework by \cite{chan2016} and its application for the closeness property. We then give some implementation details in Section \cite{sec:implementation}, and describe the experimental setup and our tests in Section \cite{sec:experiments}.
+The rest of the paper is organized as follows: Section \ref{sec:naive}
+describes the naive algorithms we developed to solve the problems
+we selected; in Section \ref{sec:monotonicity} we review the general
+framework that is set in \cite{bokal2015} for solving time range
+query problems, and show how it is applied to compute $j^*(i)$ for
+monotonicity. Section \ref{sec:closeness} reviews the framework by
+\cite{chan2016} and its application for the closeness property. We
+then give some implementation details in Section \ref{sec:implementation},
+and describe the experimental setup and our tests in Section
+\ref{sec:experiments}.
 
 \section{Naive Algorithms}
 \label{sec:naive}
@@ -72,7 +79,7 @@ Suppose that for a sequence of length $n$ a property $P$ can be checked in $T_P(
 
 \subsection{Monotonicity}
 \label{sec:naive:monotonicity}
-To detect whether a sequence is monotone or no, we can process the points while keeping a set of polar angles (field-of-view or FoV) that a direction vector $v$ can have. Notice that the FoV is always an interval. When a new point arrives we can update the FoV in constant time. If the FoV ever becomes empty, then the given sequence is not monotone. This algorithm runs in $O(n)$ time for a sequence of length $n$. Using this submodule for $SN$ we would get a $O(n^2\log n)$ algorithm.
+To detect whether a sequence is monotone or no, we can process the points while keeping a set of polar angles (field-of-view or FoV) that a direction vector $v$ can have. Notice that the FoV is always an interval. When a new point arrives we can update the FoV in constant time. If the FoV ever becomes empty, then the given sequence is not monotone. This algorithm runs in $O(n)$ time for a sequence of length $n$. Using this submodule for $SN$ we would get a $O(n^2\log n)$ algorithm for computing $j^*(i)$ for all values of $i$.
 
 However, doing a binary search for monotonicity is redundant, since we will do the same computation many times. Instead, for each $i$ proceed with the FoV computation until it is empty, which will happen precisely when we reach $j^*(i) + 1$. The resulting algorithm runs in $O(n^2)$ time.
 
@@ -80,20 +87,29 @@ However, doing a binary search for monotonicity is redundant, since we will do t
 \label{sec:naive:closeness}
 The simple method of closeness-check takes $O(n^2)$ for a sequence of $n$ points, because one has to check all pairs of points. This results in $SN$ runtime of $O(n^3\log n)$, which is super-slow. We can improve the closeness-check to $O(n\log n)$ using furthest-point Voronoi diagrams, but that would not qualify for $SN$ and would also take $O(n^2 \log^2 n)$ time to compute, which is also not fast.
 
-Define $k^*(i)$ as the largest index such that $d(s_i, s_j) \leq 1$ for all $j \leq k*(i)$. Clearly, $k^*(i) \geq j^*(i)$. Also, notice that $k^*$ can be computed in $O(n^2)$ for all points.
+Define $k^*(i)$ as the largest index such that $d(s_i, s_j) \leq
+1$ for all $j \leq k^*(i)$. Clearly, $k^*(i) \geq j^*(i)$ because we are checking for a weaker property. Also,
+notice that $k^*$ can be computed in $O(n^2)$ for all points by calculating all pairwise distances.
 
-\textbf{Claim TODO - formatting} For $i < n$ $j^*(i) = \min( j^*(i + 1), k^*(i) )$
+Noticing that $j^*(i) = \min( j^*(i + 1), k^*(i) )$, we can calculate
+$j^*(i)$ for all points in $O(n)$ extra time if we are given all
+values for $k^*(i)$. So we found a $O(n^2)$ algorithm for computing
+closeness property for all subsequences.
 
-\textbf{Proof} obvious (should we even prove this?
-
-This claim gives us an $O(n^2)$ $SN$ construction of $j^*(i)$ for the closeness property.
-
-\section{something and Monotonicity TODO}
+\section{Monotonicity in Linear Time}
 \label{sec:monotonicity}
 Bokal et al. introduced an elegant framework to deal with range queries for hereditary problems. The key idea in their work is to greedily split the given set of points into ranges, defined by anchor points, and solve for each using a divide and conquer. To simplify the reasoning we first define a property matrix $A_P$ such that
 \[ A_P(i, j) = \twopartdef{1}{P(S[i, j]) = true}{0}{P(S[i, j]) = false} \]
 
-See Figure \ref{fig:property_matrix} for an example. Suppose that there is an algorithm $J_P$ that, for a given $i$, finds $j^*(i)$ (notice that even if such $J_P$ exists, we are not happy to run it $n$ times for each $i$). We use $J_P$ to find \textit{anchor} points in $S$ as follows. Let $a_k$ be the index of $k^{th}$ anchor point in $S$. We define $a_1 = s_1$, $a_k = j^*(a_{k-1})$ for $k > 1$. Thus, the anchor points can be found using $J_P$. Figure \ref{fig:property_matrix} shows the anchor points on $A$ (leftmost image).
+See Figure \ref{fig:property_matrix} for an example. Suppose that
+there is an algorithm $J_P$ that, for a given $i$, finds $j^*(i)$
+(notice that even if such $J_P$ exists, we are not happy to run it
+$n$ times for each $i$). We use $J_P$ to find \textit{anchor} points
+in $S$ as follows. Let $a_k$ be the index of $k^{th}$ anchor point
+in $S$. We define $a_1 = s_1$, $a_k = \max(1 + a_{k-1}; j^*(a_{k-1}))$
+for $k > 1$. Thus, the anchor points can be found using $J_P$.
+Figure \ref{fig:property_matrix} shows the anchor points on $A$
+(leftmost image).
 
 \begin{figure}
     \centering
@@ -113,19 +129,30 @@ Also shown in Figure \ref{fig:property_matrix} are rectangles formed using the a
 Both of these modules are property specific, but Bokal et al. make another interesting generic step that explains how solving rectangles can be done using a divide-and-conquer approach. We will, however, skip that step and focus on the problem of monotonicity. It turns out that monotonicity does not require the divide-and-conquer approach to solve anchored rectangles.
 
 \subsection{Solving Monotonicity}
-Section \ref{sec:naive:monotonicity} discusses how to find $j^*(i)$ in linear time for a given $i$ by using intervals of polar angles. This algorithm will serve as the subroutine for Lemma \ref{lemma2.1}(a).
+Section \ref{sec:naive:monotonicity} discusses how to find $j^*(i)$ in linear time for a given $i$ by using intervals of polar angles. This algorithm will serve as the subroutine for Lemma 2.1(a).
 
-Consider an anchored rectangle $R$ with a lower-left corner $(a, a)$, width $w$ and height $h$. By traversing the points $S[a, a + w]$, we can compute for each $j = a, \dots, a + w$ the interval of polar angles $I_j$ such that $S[a, j]$ is monotone with respect to any direction in $I_j$. Also, notice that by traversing the points in $S[a - h, a]$ in reverse order, a similar set $I_i$ can be computed for $a - h \leq i < a$, representing the set of monotone directions for $S[i, a]$.
+Consider an anchored rectangle $R$ with a lower-left corner $(a, a)$, width $w$ and height $h$.
+\begin{enumerate}[-]
+\item By traversing the points $S[a, a + w]$, we can compute for each $j = a, \dots, a + w$ the interval of polar angles $I_j$ such that $S[a, j]$ is monotone with respect to all directions in $I_j$.
+\item By traversing the points $S[a - h, a]$ in reverse order, a similar set $I_i$ can be computed for $a - h \leq i < a$, representing the set of monotone directions for $S[i, a]$.
+\end{enumerate}
 
-Notice that if $i < a < j$, then $S[i, j]$ is monotone if and only if $I_i$ and $I_j$ have a non-empty intersection. Thus, for each $i = a - h, \dots, a$, $j^*(i)$ is the largest index such that $I_i \cap I_{j^*(i)} \neq \emptyset$. Since the search for $j^*(i+1)$ can start from $j^*(i)$, we can compute $j^*(i)$ for all $i \in [a - h, a]$ in linear time.
+If $i < a < j$, then $S[i, j]$ is monotone if and only
+if $I_i$ and $I_j$ have a non-empty intersection. Thus, for each
+$i = a - h, \dots, a$, $j^*(i)$ is the largest index such that $I_i
+\cap I_{j^*(i)} \neq \emptyset$.
+Noting that search for $j^*(i+1)$
+can start from $j^*(i)$, we can compute $j^*(i)$ for all $i \in [a
+- h, a]$ in linear time.
 
-These two subroutines, together with \ref{lemma2.1} give a linear solution to the monotonicity problems.
+These two subroutines, together with Lemma 2.1 give a linear solution
+to the monotonicity problems. We have evaluated Naive algorithm
+(from Section \ref{sec:naive}) and this algorithm in Section
+\ref{sec:experiments}.
 
 %This is where divide and conquer strategy is used. Consider a rectangle $R$ with rows $[a, a + h]$ and columns $[b, b + w]$. We can set $m = a + [h / 2]$ and using $J_P$ find $j^*(m)$. If $m \leq i \leq a + h$ then $j^*(i) \geq j^*(m)$, and if $a \leq i \leq m$ then $j^*(i) \leq j^*(m)$. Therefore, once we know the value of $j^*(m)$ the solution for $R$ can be computed using two recursive calls to its upper-left and lower-right sub-rectangles.
 
 %Notice, however, this type of recursion will just end up calling $J_P$ for all indices in $[a, a + h]$, having no divide-and-conquer effect.
-
-
 
 \section{something and Closeness TODO}
 \label{sec:closeness}

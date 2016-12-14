@@ -2,6 +2,7 @@
 .idea/
 *.sw[op]
 latex.out/
+.DS_Store
 
 # build
 build/
