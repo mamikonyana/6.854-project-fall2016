@@ -35,6 +35,8 @@ plots/monotonicity_random_walk.png: bench/bce_monotonicity_random_walk-0.02.txt
 plots/monotonicity_moving_gaussian.png: bench/bce_monotonicity_moving_gaussian.txt
 	python vis/pretty_answer_triangle.py $^ --png $@ --label "Bokal, Cabello, Eppstein" --title "Monotonicity: moving point with Gaussian Noise."
 
+report/compare_monotonicity.table:
+
 ## Debug png's
 
 plots/compare_monotonicity.png: bench/compare_monotonicity-moving.csv
@@ -91,7 +93,7 @@ bench/compare_monotonicity-ngon.csv: bench/compare_monotonicity.exe data/3k_gon-
 	./$^ 
 	mv bench/compare_monotonicity.csv $@
 
-bench/compare_monotonicity-moving.csv: bench/compare_monotonicity.exe data/gaussian_1000.csv data/gaussian_3333.csv data/gaussian_10000.csv data/gaussian_33333.csv data/gaussian_100000.csv data/gaussian_333333.csv
+bench/compare_monotonicity-moving.csv: bench/compare_monotonicity.exe data/gaussian_1000.csv data/gaussian_3333.csv data/gaussian_10000.csv data/gaussian_33333.csv data/gaussian_100000.csv data/gaussian_333333.csv 
 	./$^ 
 	mv bench/compare_monotonicity.csv $@
 
@@ -99,8 +101,14 @@ bench/compare_monotonicity-rv0.02.csv: bench/compare_monotonicity.exe data/3k_ra
 	./$^
 	mv bench/compare_monotonicity.csv $@
 
-bench/compare_diameter.csv: bench/compare_diameter.exe data/10k_gon-0.55.csv data/10k_random_walk_2d-0.02.csv
+bench/compare_diameter_random_walk.csv: bench/compare_diameter.exe data/3k_random_walk_2d-0.02.csv data/10k_random_walk_2d-0.02.csv data/30k_random_walk_2d-0.02.csv data/100k_random_walk_2d-0.02.csv 
 	./$^
+	mv bench/compare_diameter.csv $@
+	
+
+bench/compare_diameter_moving_gaussian.csv: bench/compare_diameter.exe  data/gaussian_1000.csv data/gaussian_3333.csv data/gaussian_10000.csv data/gaussian_33333.csv  data/gaussian_100000.csv data/gaussian_333333.csv 
+	./$^
+	mv bench/compare_diameter.csv $@
 
 bench/bce_monotonicity_10k_gon-0.55.txt: bench/bce_monotonicity.exe data/10k_gon-0.55.csv
 	./$^ $@

@@ -8,10 +8,10 @@
 int main(int argc, char *argv[]) {
     printf("argc %d\n", argc);
     FILE *outfile = fopen("bench/compare_diameter.csv", "w");
-    fprintf(outfile, "Chan/Prat,Naive\n");
+    fprintf(outfile, "num_points, Chan/Prat,Naive\n");
     for (int i = 1; i < argc; i++) {
         auto data_file = argv[i];
-        printf("loading %s..\n", argv[1]);
+        printf("loading %s..\n", argv[i]);
         std::vector<Point> data = load_csv_data(data_file);
         printf("loaded %lu points\n", data.size());
 
@@ -23,7 +23,8 @@ int main(int argc, char *argv[]) {
         printf("%f milliseconds, and %f milliseconds\n",
                1000 * (double) (cp_end - cp_start) / CLOCKS_PER_SEC,
                1000 * (double) (naive_end - cp_end) / CLOCKS_PER_SEC);
-        fprintf(outfile, "%f,%f\n",
+        fprintf(outfile, "%lu,%.1f,%.1f\n",
+                data.size(),
                 1000 * (double) (cp_end - cp_start) / CLOCKS_PER_SEC,
                 1000 * (double) (naive_end - cp_end) / CLOCKS_PER_SEC);
         // Random checks
@@ -38,17 +39,17 @@ int main(int argc, char *argv[]) {
         }
         printf("\n");
 
-        printf("All checks..\n");
-        bool works = true;
-        for (int i = 0; i < data.size(); ++i) {
-            if (naive_a[i] != cp_ans[i]) {
-                printf("Houston we've got a problem!\n");
-                works = false;
-            }
-        }
-        if (works) {
-            printf("Heuston we don't have problems!");
-        }
+        // printf("All checks..\n");
+        // bool works = true;
+        // for (int i = 0; i < data.size(); ++i) {
+        //     if (naive_a[i] != cp_ans[i]) {
+        //         printf("Houston we've got a problem!\n");
+        //         works = false;
+        //     }
+        // }
+        // if (works) {
+        //     printf("Heuston we don't have problems!");
+        // }
         printf("\n");
     }
     fclose(outfile);

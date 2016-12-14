@@ -272,23 +272,45 @@ practice for this case.
 \begin{figure}[!ht]
     \centering
 %  \includegraphics[height=5cm]{figures/monotonicity_comparison}
-    \begin{tabular}{c|c}
-      Bokal et al. & Naive \\
-      \hline
-      0.616     &    3.43 \\
-      \hline
-      2.008     &    12.799 \\
-      \hline
-      6.038     & 45.436 \\
-      \hline
-      19.33     & 152.641 \\
-      \hline
-      61.926    & 428.032 \\
-      \hline
-      194.457   & 1454.634
+    \begin{tabular}{c|c|c}
+        points in dataset & Bokal et al. & Naive  \\
+    \hline
+        1000    & 0.6    & 3.6  \\
+    \hline
+        3333    & 2.1    & 12.8  \\
+    \hline
+        10000    & 5.8    & 43.5  \\
+    \hline
+        33333    & 19.3    & 142.2  \\
+    \hline
+        100000    & 64.2    & 416.8  \\
+    \hline
+        333333    & 202.0    & 1398.2  \\
     \end{tabular}
-    \caption{Runtimes (in millseconds) of Naive and Bokal et. al}
-    \label{fig:monotonicity_comparison}
+    \caption{Runtimes (in millseconds) of Naive and Bokal et. al for point moving in $x$ direction with Gaussian noise.}
+    \label{fig:monotonicity_comparison2}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+%  \includegraphics[height=5cm]{figures/monotonicity_comparison}
+	\begin{tabular}{c|c|c}
+	    points in dataset   & Bokal et al. & Naive  \\
+	\hline
+	    3000    & 1.9    & 2.6  \\
+	\hline
+	    10000    & 6.0    & 8.3  \\
+	\hline
+	    30000    & 18.0    & 25.0  \\
+	\hline
+	    100000    & 61.7    & 89.5  \\
+	\hline
+	    300000    & 190.5    & 258.3  \\
+	\hline
+	    1000000    & 629.5    & 909.6 
+	\end{tabular}
+    \caption{Runtimes (in millseconds) of Naive and Bokal et. al for random walk dataset.}
+    \label{fig:monotonicity_comparison2}
 \end{figure}
 
 \subsection{Closeness}
@@ -322,22 +344,39 @@ TODO(arsen): Fix timing comparison
 
 \begin{figure}[!ht]
   \centering
-    \begin{tabular}{c|c}
-        Bokal et al. & Naive \\
-        \hline
-        0.616     &    3.43 \\
-        \hline
-        2.008     &    12.799 \\
-        \hline
-        6.038     & 45.436 \\
-        \hline
-        19.33     & 152.641 \\
-        \hline
-        61.926    & 428.032 \\
-        \hline
-        194.457   & 1454.634
-    \end{tabular}
-  \caption{Runtimes (in millseconds) of Naive and Chan, Prat [Similar to Figure \ref{fig:monotonicity_comparison}}
+\begin{tabular}{c|c|c}
+    points in dataset &  Chan Prat    & Naive  \\
+\hline
+    1000    & 9.3    & 0.5  \\
+\hline
+    3333    & 28.3    & 1.5  \\
+\hline
+    10000    & 88.7    & 4.5  \\
+\hline
+    33333    & 307.1    & 15.5  \\
+\hline
+    100000    & 815.2    & 46.8  \\
+\hline
+    333333    & 2736.9    & 157.3 
+\end{tabular}
+  \caption{Runtimes (in millseconds) of Naive and Chan, Prat on \textbf{moving point} dataset [Similar to Figure \ref{fig:monotonicity_comparison}}
+  \label{fig:diameter_comparison}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+\begin{tabular}{c|c|c}
+    points in dataset &  Chan/Prat    & Naive  \\
+\hline
+    3000    & 79.3    & 1316.2  \\
+\hline
+    10000    & 269.7    & 5998.3  \\
+\hline
+    30000    & 886.3    & 26716.6  \\
+\hline
+    100000    & 2751.2    & 90934.6 
+\end{tabular}
+  \caption{Runtimes (in millseconds) of Naive and Chan, Prat on \textbf{random walk} dataset [Similar to Figure \ref{fig:monotonicity_comparison}}
   \label{fig:diameter_comparison}
 \end{figure}
 

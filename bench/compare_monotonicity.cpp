@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]) {
     printf("argc %d\n", argc);
     FILE *outfile = fopen("bench/compare_monotonicity.csv", "w");
-    fprintf(outfile, "BCE,Naive\n");
+    fprintf(outfile, "num_points,BCE,Naive\n");
     for (int i = 1; i < argc; i++) {
         auto data_file = argv[i];
         printf("loading %s..\n", argv[i]);
@@ -22,9 +22,10 @@ int main(int argc, char *argv[]) {
         printf("%f milliseconds, and %f milliseconds\n",
                1000 * (double) (bce_end - bce_start) / CLOCKS_PER_SEC,
                1000 * (double) (naive_end - bce_end) / CLOCKS_PER_SEC);
-        fprintf(outfile, "%f,%f\n",
-               1000 * (double) (bce_end - bce_start) / CLOCKS_PER_SEC,
-               1000 * (double) (naive_end - bce_end) / CLOCKS_PER_SEC);
+        fprintf(outfile, "%lu,%.1f,%.1f\n",
+                data.size(),
+                1000 * (double) (bce_end - bce_start) / CLOCKS_PER_SEC,
+                1000 * (double) (naive_end - bce_end) / CLOCKS_PER_SEC);
         // Random checks
         printf("Random spot checks..\n");
         for (int _ = 0; _ < 10; _++) {
