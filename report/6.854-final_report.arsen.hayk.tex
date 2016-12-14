@@ -42,6 +42,11 @@
 
 \section{Introduction}
 \label{sec:intro}
+TODO: replace all arch to arc, arch is a part of a bridge, arc is a part of a circle\\
+
+TODO: add normal references (maybe to envelopes), see the first paper, where in the first page there are a lot of motivational references.
+
+
 With the abundance of GPS and other movement tracking sensors there is a large amount of timestamped location data. The movement of an object in space can be modelled by a sequence of points $S = s_1, \dots, s_n$. To analyse the trajectory of the movement, one may want to check a certain property $P$ for portions $S[i, j] = s_i, \dots, s_j$ of $S$ for given values of $i$ and $j$. This paper discusses how to efficiently address such queries when $P$ satisfies the following two properties:
 \begin{itemize}
     \item $P$ is boolean.
@@ -92,7 +97,7 @@ See Figure \ref{fig:property_matrix} for an example. Suppose that there is an al
 
 \begin{figure}
     \centering
-    \includegraphics[width=1.2\textwidth]{figures/property_matrix.pdf}
+    \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{figures/property_matrix.pdf}}
     \label{fig:property_matrix}
     \caption{The property matrix $A_P$. The blue regions show the locations that are 1. The left image illustrates the anchor points. The middle one shows the greedily constructed rectangles from the anchor points. On the right side is the detailed view of the property matrix. Figure from \cite{bokal2015}.}
 \end{figure}
@@ -124,12 +129,22 @@ These two subroutines, together with \ref{lemma2.1} give a linear solution to th
 
 \section{something and Closeness TODO}
 \label{sec:closeness}
+TODO: Arsen, this section should describe some preliminaries of the algorithm (e.g. the notion of polyarcs), so that there is coherency between the sections.
 
 \section{Implementation Details}
 \label{sec:implementation}
-- decided to implement chan's algorithm because the other one had voronoi and persistent data structure (or something similar) for point location in voronoi
+In the papers reviewed here (\cite{bokal2015,chan2016}) there are at least 6 algorithms presented. We wanted to implement algorithm that use frameworks of both papers. In order to limit the size of the implementation we decided to pick monotonicity property for its simplicity (and elegance), which was solved in Bokal et al. \cite{bokal2015}. We chose to implement the closeness testing algorithm from \cite{chan2016} because it used many ideas from the class, for example the intersection of convex envelopes in 2 dimensions, range trees.
 
-- chan's algorithm is closer to what we've done in class (envelopes)
+The implementations of naive algorithms as well as of the efficient monotonicity testing algorithm are relatively easy, so in this paper we skip discussing them. We implemented the $O(n \log ^2 n)$ algorithm for solving closeness testing from \cite{chan2016}.
+
+The algorithm has two distinct parts: a high-level tree-range data structure, and a lower-level data structure for storing \textit{polyarcs} (see Section \ref{sec:closeness}). A polyarc is a convex geometric shape, which is defined by a clockwise set of its vertices like a polygon. Unlike a polygon, each edge of a polyarc is an arc of a circle. The algorithm needs to be able to find the intersection of two polyarcs, and also decide whether a query point is inside the polyarc.
+
+Both of these algorithms are similar to those of polygons, but the majority of the implementation effort was spent to handle the cases specific to polyarcs. Our representation of polyarcs has two ``sides'': upper and lower, respectively the upper part of the complex shape and the lower one. To intersect two polyarcs we first found a minimal upper envelope i.e. for each $x$ coordinate found recorded the polyarc, which had a lower upper side. Similarly, we computed a maximal lower envelope. The area above the maximal lower envelope and minimal upper envelope is the intersection of two polyarcs. Each of these steps can be performed in linear time by a sweep line technique.
+
+The envelope representation of polyarcs is also helpful for querying whether a point is inside the polyarc or no. One needs to simply do a binary search for the $x$ coordinate of the candidate point.
+If a vertical line at that location crosses the higher envelope on a larger value of $y$ than the lower envelope, then the query point is inside the polyarc.
+
+Overall, we wrote more than 1200 lines of code in C++ for the implementation of the algorithms, and 800 lines of code for testing. Large part of the code is dedicated to the closeness algorithm in $O(n \log^2 n)$. We used C++ for the implementation so that the overhead that the language adds to the runtime is minimized. A simple language to write code in is Python, but we think that in this case the strong type checking of C++ helped us, because of a complex structure of the code. 
 
 \section{Experiments}
 \label{sec:experiments}
